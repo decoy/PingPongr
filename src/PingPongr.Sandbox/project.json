@@ -1,0 +1,19 @@
+{
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "Microsoft.Owin.SelfHost": "3.0.1",
+    "PingPongr": { "target": "project" }
+  },
+
+  "commands": {
+    "PingPongr.Sandbox": "PingPongr.Sandbox"
+  },
+
+  "frameworks": {
+    "net45": { },
+    "dnx451": { }
+  }
+}
