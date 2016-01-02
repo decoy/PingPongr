@@ -7,7 +7,7 @@
     using Mediator;
 
     /// <summary>
-    /// Gets routes from possible types
+    /// Helper for generating the <see cref="Route{TRequest, TResponse}"/> wrappers.
     /// </summary>
     public class RouteBuilder
     {
@@ -29,6 +29,11 @@
             return new RouteBuilder(AppDomain.CurrentDomain.GetAssemblies());
         }
 
+        /// <summary>
+        /// Creates a new builder from the specified assembles
+        /// with the the default filters and path functions
+        /// </summary>
+        /// <param name="assemblies"></param>
         public RouteBuilder(IEnumerable<Assembly> assemblies)
         {
             //defaults
@@ -38,18 +43,34 @@
               .Where(IsRequest);
         }
 
+        /// <summary>
+        /// Filter out types from the specified assemblies.
+        /// only possible <see cref="IRequest{TResponse}"/> types will be in the list.
+        /// </summary>
+        /// <param name="filter">the filter function (where clause)</param>
+        /// <returns>this</returns>
         public RouteBuilder Filter(Func<Type, bool> filter)
         {
             types = types.Where(filter);
             return this;
         }
 
+        /// <summary>
+        /// Allows for overriding the default path.
+        /// Default: t => "/" + t.FullName.Replace(".", "/");
+        /// </summary>
+        /// <param name="pathBuilder">the function to build paths from the type</param>
+        /// <returns>this</returns>
         public RouteBuilder Path(Func<Type, string> pathBuilder)
         {
             this.pathBuilder = pathBuilder;
             return this;
         }
 
+        /// <summary>
+        /// Generates the routes from the builder
+        /// </summary>
+        /// <returns>an enumerable of the routes</returns>
         public IEnumerable<IRoute> GetRoutes()
         {
             return types.Select(t =>
@@ -75,7 +96,7 @@
         }
 
         /// <summary>
-        /// Gets a response type from a request type
+        /// Gets the response type from a <see cref="IRequest{TResponse}"/> type
         /// </summary>
         private static Type GetResponseType(Type requestType)
         {

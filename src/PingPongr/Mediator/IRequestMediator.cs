@@ -6,8 +6,9 @@
 
     /// <summary>
     /// Wrapper interface used by the mediator and routers
+    /// Mediates a single <see cref="IRequest{TResponse}"/> type
     /// </summary>
-    /// <typeparam name="TResponse"></typeparam>
+    /// <typeparam name="TResponse">The expected response type</typeparam>
     public interface IRequestMediator<TResponse>
     {
         TResponse Send(InstanceFactory factory, IRequest<TResponse> msg);

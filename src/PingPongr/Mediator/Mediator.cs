@@ -8,7 +8,7 @@
 
     /// <summary>
     /// Reflection based mediation with pretty syntax sending. 
-    /// Obviously inspired by https://github.com/jbogard/MediatR
+    /// Obviously originated from https://github.com/jbogard/MediatR
     /// 
     /// Most configuration magic happens at the container rather than extra interface types.
     /// Acts as a wrapper and generator for <see cref="RequestMediator{TRequest, TResponse}"/>.

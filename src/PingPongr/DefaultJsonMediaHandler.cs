@@ -3,6 +3,10 @@
     using System.IO;
     using System.Threading.Tasks;
 
+    /// <summary>
+    /// A simple default media type handler.
+    /// Uses <see cref="SimpleJson"/> internally
+    /// </summary>
     public class DefaultJsonMediaHandler : IMediaTypeHandler
     {
         public bool CanHandleMediaType(string mediaType)

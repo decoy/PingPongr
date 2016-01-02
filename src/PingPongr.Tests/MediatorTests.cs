@@ -72,7 +72,7 @@
         [Fact]
         public void ShouldSendMessage()
         {
-            var med = new Mediator(t => new PingHandler(), null);
+            IMediator med = new Mediator(t => new PingHandler(), null);
 
             var result = med.Send(new Ping() { Message = "Hi" });
 
@@ -83,7 +83,7 @@
         [Fact]
         public async void ShouldSendMessageAsync()
         {
-            var med = new Mediator(t => new PingHandlerAsync(), null);
+            IMediator med = new Mediator(t => new PingHandlerAsync(), null);
 
             var result = await med.SendAsync(new Ping() { Message = "Hi" });
 
@@ -93,7 +93,7 @@
         [Fact]
         public async void ShouldSendMessageAsyncCancellable()
         {
-            var med = new Mediator(t => new PingHandlerAsyncCancel(), null);
+            IMediator med = new Mediator(t => new PingHandlerAsyncCancel(), null);
 
             var result = await med.SendAsync(new Ping() { Message = "Hi" }, new CancellationToken());
 
@@ -104,7 +104,7 @@
         [Fact]
         public void ShouldPublishMessage()
         {
-            var med = new Mediator(null, t => new IRequestHandler<Ping, Pong>[] { new PingHandler(), new PingAlsoHandler() });
+            IMediator med = new Mediator(null, t => new IRequestHandler<Ping, Pong>[] { new PingHandler(), new PingAlsoHandler() });
 
             var results = med.Publish(new Ping() { Message = "Hi" });
 
@@ -117,7 +117,7 @@
         [Fact]
         public async void ShouldPublishMessageAsync()
         {
-            var med = new Mediator(null, t => new IRequestAsyncHandler<Ping, Pong>[] { new PingHandlerAsync(), new PingAlsoHandlerAsync() });
+            IMediator med = new Mediator(null, t => new IRequestAsyncHandler<Ping, Pong>[] { new PingHandlerAsync(), new PingAlsoHandlerAsync() });
 
             var results = await Task.WhenAll(med.PublishAsync(new Ping() { Message = "Hi" }));
 
@@ -129,7 +129,7 @@
         [Fact]
         public async void ShouldPublishMessageAsyncCancellable()
         {
-            var med = new Mediator(null, t => new IRequestCancellableAsyncHandler<Ping, Pong>[] { new PingHandlerAsyncCancel(), new PingAlsoHandlerAsyncCancel() });
+            IMediator med = new Mediator(null, t => new IRequestCancellableAsyncHandler<Ping, Pong>[] { new PingHandlerAsyncCancel(), new PingAlsoHandlerAsyncCancel() });
 
             var results = await Task.WhenAll(med.PublishAsync(new Ping() { Message = "Hi" }, new CancellationToken()));
 

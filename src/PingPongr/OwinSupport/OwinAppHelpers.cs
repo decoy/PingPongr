@@ -11,6 +11,13 @@
 
     public static class OwinAppHelpers
     {
+        /// <summary>
+        /// Use the PingPongr as Owin middleware.
+        /// </summary>
+        /// <param name="app">The app to attach to</param>
+        /// <param name="router">an instance of a PingPongr router</param>
+        /// <param name="routePrefix">Optional route prefix.  The router will only handle paths that have this prefix.  If null, will handle all paths.</param>
+        /// <returns></returns>
         public static IAppBuilder UsePingPongr(this IAppBuilder app, IRouter router, string routePrefix = null)
         {
             return app.Use(UsePingPongr(router, routePrefix));

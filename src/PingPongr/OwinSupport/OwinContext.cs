@@ -4,6 +4,9 @@
     using System.IO;
     using System.Linq;
 
+    /// <summary>
+    /// Wrapper for the Owin context environment dictionary
+    /// </summary>
     public class OwinContext : IRequestContext
     {
         private IDictionary<string, object> environment;

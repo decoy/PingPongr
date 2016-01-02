@@ -6,6 +6,11 @@
     using System.Threading.Tasks;
     using System;
 
+    /// <summary>
+    /// The default implementation of the router.  
+    /// Paths are matched to routes exactly.
+    /// First matching media handler is used to process the request
+    /// </summary>
     public class Router : IRouter
     {
         private readonly IDictionary<string, IRoute> routes;
@@ -14,6 +19,12 @@
 
         private readonly InstanceFactory factory;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="routes">The list of unique routes to be handled</param>
+        /// <param name="mediaHandlers">Available media handlers</param>
+        /// <param name="factory">Factory used to generate new request handlers</param>
         public Router(IEnumerable<IRoute> routes, IEnumerable<IMediaTypeHandler> mediaHandlers, InstanceFactory factory)
         {
             this.routes = routes.ToDictionary(r => r.Path);
