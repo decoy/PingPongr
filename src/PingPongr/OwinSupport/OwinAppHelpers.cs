@@ -20,7 +20,6 @@
         {
             return next => async env =>
             {
-                var sw = System.Diagnostics.Stopwatch.StartNew();
                 var context = new OwinContext(env, routePrefix);
 
                 if (routePrefix == null || context.RequestPath.StartsWith(routePrefix))
@@ -29,7 +28,6 @@
 
                     context.StatusCode = context.IsHandled ? 200 : 404;
                 }
-                System.Console.WriteLine(string.Format("Request {0} handled in {1}ms", context.Path, sw.ElapsedMilliseconds));
                 await next(env);
             };
         }
