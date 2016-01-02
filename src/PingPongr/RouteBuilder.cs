@@ -14,19 +14,24 @@
         private IEnumerable<Type> types { get; set; }
         private Func<Type, string> pathBuilder { get; set; }
 
+        /// <summary>
+        /// Creates a new builder from the specified assembles
+        /// with the the default filters and path functions
+        /// </summary>
+        /// <param name="assemblies"></param>
         public static RouteBuilder WithAssemblies(IEnumerable<Assembly> assemblies)
         {
             return new RouteBuilder(assemblies);
         }
 
+        /// <summary>
+        /// Creates a new builder from the specified assembles
+        /// with the the default filters and path functions
+        /// </summary>
+        /// <param name="assemblies"></param>
         public static RouteBuilder WithAssemblies(params Assembly[] assemblies)
         {
             return new RouteBuilder(assemblies);
-        }
-
-        public static RouteBuilder WithLoadedAssemblies()
-        {
-            return new RouteBuilder(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         /// <summary>
