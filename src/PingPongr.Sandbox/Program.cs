@@ -4,6 +4,9 @@
     using OwinSupport;
     using System;
     using System.Linq;
+    using SimpleInjector;
+    using Mediator;
+    using Handlers;
 
     public class Program
     {
@@ -11,25 +14,46 @@
         {
             public void Configuration(IAppBuilder app)
             {
-                var routes = RouteBuilder
-                    .WithAssemblies(typeof(Program).Assembly)  //limit our search to this assembly
-                    .Filter(t => t.FullName.StartsWith("PingPongr.Sandbox.Api")) //limit to api namespace
-                    .Path(t => "/" + t.Name) //override default path naming
-                    .GetRoutes();
+                var container = BuildContainer();
 
-                foreach (var r in routes) Console.WriteLine(r.Path);
-
-                //build the router - this could be done using a proper container
-                var router = new Router(
-                    routes,
-                    new[] { new DefaultJsonMediaHandler() },
-                    SingleInstanceFactory);
-
-                
-
-                app.UsePingPongr(router, "/api");
-
+                app.UseSimpleInjectorMiddleware(container);
+                app.UsePingPongr(container.GetInstance<IRouter>(), "/api");
                 app.UseWelcomePage("/");
+            }
+
+            public Container BuildContainer()
+            {
+                //setup the container
+                var container = new Container();
+                var assemblies = new[] { typeof(Program).Assembly };
+
+                //this is the router's path to grabbing new request handler instances
+                container.RegisterSingleton(new InstanceFactory(container.GetInstance));
+
+                //Our default media handler
+                container.RegisterCollection<IMediaTypeHandler>(new[] { new DefaultJsonMediaHandler() });
+
+                //TODO more examples!
+                container.Register(typeof(IRequestAsyncHandler<,>), assemblies);
+                container.RegisterDecorator(typeof(IRequestAsyncHandler<,>), typeof(LoggingDecorator<,>));
+
+                //build our routes and register.
+                var routes = RouteBuilder
+                    .WithAssemblies(assemblies)  //limit our search to this assembly
+                    .Filter(t => t.FullName.StartsWith("PingPongr.Sandbox.Api")) //limit to api namespace
+                    .Path(t => "/" + t.Name.ToLower()) //override default path naming
+                    .GetRoutes();
+                container.RegisterCollection(routes);
+
+                //the default router implementation
+                container.Register<IRouter, Router>();  
+
+                //get owin context from handlers: http://simpleinjector.readthedocs.org/en/latest/owinintegration.html
+                container.RegisterSingleton<IOwinContextProvider>(new CallContextOwinContextProvider());
+
+                container.Verify();
+
+                return container;
             }
         }
 
@@ -37,21 +61,9 @@
         {
             using (Microsoft.Owin.Hosting.WebApp.Start<Startup>("http://localhost:12345"))
             {
+                Console.WriteLine("Started...");
                 Console.ReadLine();
             }
-        }
-
-        /// <summary>
-        /// Pretends to be an IOC container providing new types
-        /// </summary>
-        /// <param name="serviceType"></param>
-        /// <returns></returns>
-        private static object SingleInstanceFactory(Type serviceType)
-        {
-            var type = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(s => s.GetTypes())
-                .First(serviceType.IsAssignableFrom);
-            return Activator.CreateInstance(type);
         }
     }
 }
