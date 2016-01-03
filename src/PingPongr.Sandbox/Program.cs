@@ -1,12 +1,15 @@
 ﻿namespace PingPongr.Sandbox
 {
+    using Handlers;
+    using Mediator;
+    using Microsoft.Owin;
+    using Microsoft.Owin.FileSystems;
+    using Microsoft.Owin.StaticFiles;
     using Owin;
     using OwinSupport;
-    using System;
-    using System.Linq;
     using SimpleInjector;
-    using Mediator;
-    using Handlers;
+    using System.IO;
+    using System;
 
     public class Program
     {
@@ -18,6 +21,16 @@
 
                 app.UseSimpleInjectorMiddleware(container);
                 app.UsePingPongr(container.GetInstance<IRouter>(), "/api");
+
+                //static file hosting for the test client
+                var dir = Directory.CreateDirectory("./web");
+                Console.WriteLine("Hosting files from: " + dir.FullName);
+                app.UseFileServer(new FileServerOptions()
+                {
+                    FileSystem = new PhysicalFileSystem(dir.FullName),
+                    RequestPath = new PathString("/web"),
+                });
+
                 app.UseWelcomePage("/");
             }
 
@@ -46,7 +59,7 @@
                 container.RegisterCollection(routes);
 
                 //the default router implementation
-                container.Register<IRouter, Router>();  
+                container.Register<IRouter, Router>();
 
                 //get owin context from handlers: http://simpleinjector.readthedocs.org/en/latest/owinintegration.html
                 container.RegisterSingleton<IOwinContextProvider>(new CallContextOwinContextProvider());
@@ -59,9 +72,11 @@
 
         public static void Main(string[] args)
         {
-            using (Microsoft.Owin.Hosting.WebApp.Start<Startup>("http://localhost:12345"))
+            var url = "http://localhost:12345";
+
+            using (Microsoft.Owin.Hosting.WebApp.Start<Startup>(url))
             {
-                Console.WriteLine("Started...");
+                Console.WriteLine("Listening at " + url);
                 Console.ReadLine();
             }
         }
