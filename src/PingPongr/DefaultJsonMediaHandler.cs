@@ -1,6 +1,7 @@
 ﻿namespace PingPongr
 {
     using System.IO;
+    using System.Threading;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -22,14 +23,14 @@
             }
         }
 
-        public async Task<T> Read<T>(Stream inputStream)
+        public async Task<T> Read<T>(Stream inputStream, CancellationToken cancellationToken)
         {
             var json = await GetStringFromStreamAsync(inputStream);
 
             return SimpleJson.DeserializeObject<T>(json);
         }
 
-        public Task Write(object content, Stream outputStream, IRequestContext context)
+        public Task Write(object content, Stream outputStream, IRequestContext context, CancellationToken cancellationToken)
         {
             context.ResponseMediaTypes = new[] { "application/json" };
 

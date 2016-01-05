@@ -1,23 +1,22 @@
 ﻿namespace PingPongr.Tests
 {
-    using Mediator;
     using Shouldly;
     using System.Linq;
     using Xunit;
 
     public class RouteBuilderTests
     {
-        public class Ping : IRequest<Pong>
+        public class Ping : IRouteRequest<Pong>
         {
             public string Message { get; set; }
         }
 
-        public class Ping2 : IRequest<Pong>
+        public class Ping2 : IRouteRequest<Pong>
         {
             public string Message { get; set; }
         }
 
-        public abstract class PingAbs : IRequest<Pong>
+        public abstract class PingAbs : IRouteRequest<Pong>
         {
             public string Message { get; set; }
         }

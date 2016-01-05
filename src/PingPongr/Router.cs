@@ -1,10 +1,9 @@
 ﻿namespace PingPongr
 {
-    using Mediator;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using System;
 
     /// <summary>
     /// The default implementation of the router.  

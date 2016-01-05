@@ -4,7 +4,6 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
-    using Mediator;
 
     /// <summary>
     /// Helper for generating the <see cref="Route{TRequest, TResponse}"/> wrappers.
@@ -50,7 +49,7 @@
 
         /// <summary>
         /// Filter out types from the specified assemblies.
-        /// only possible <see cref="IRequest{TResponse}"/> types will be in the list.
+        /// only possible <see cref="IRouteRequest{TResponse}"/> types will be in the list.
         /// </summary>
         /// <param name="filter">the filter function (where clause)</param>
         /// <returns>this</returns>
@@ -89,7 +88,7 @@
         private static bool IsRequest(Type type)
         {
             return !type.IsAbstract && !type.IsInterface && type.GetInterfaces()
-                .Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRequest<>));
+                .Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>));
         }
 
         private static IRoute FromType(Type requestType)
@@ -101,12 +100,12 @@
         }
 
         /// <summary>
-        /// Gets the response type from a <see cref="IRequest{TResponse}"/> type
+        /// Gets the response type from a <see cref="IRouteRequest{TResponse}"/> type
         /// </summary>
         private static Type GetResponseType(Type requestType)
         {
             return requestType.GetInterfaces()
-                .Single(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRequest<>))
+                .Single(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>))
                 .GetGenericArguments()
                 .Single();
         }
