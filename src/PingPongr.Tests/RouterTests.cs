@@ -6,6 +6,7 @@
     using System.Threading;
     using System.Threading.Tasks;
     using Xunit;
+    using System;
 
     public class RouterTests
     {
@@ -24,6 +25,18 @@
             public bool HasHandled { get; private set; }
             public Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
             {
+                HasHandled = true;
+                return Task.FromResult(new Pong { Message = "FakePong" });
+            }
+        }
+
+        public class FakeCancelMeHandler : IRouteRequestHandler<Ping, Pong>
+        {
+            public bool HasHandled { get; private set; }
+            public Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
+            {
+                cancellationToken.ThrowIfCancellationRequested(); //EJECT!
+
                 HasHandled = true;
                 return Task.FromResult(new Pong { Message = "FakePong" });
             }
@@ -127,6 +140,26 @@
 
             request.IsHandled.ShouldBeFalse();
             route.HasSent.ShouldBeFalse();
+        }
+
+        [Fact]
+        public void ShouldCancelRequest()
+        {
+            var handler = new FakeCancelMeHandler();
+            var route = new Route<Ping, Pong>();
+            var request = new FakeRequest();
+            var media = new FakeMedia();
+            var cancel = new CancellationTokenSource();
+            request.CancellationToken = cancel.Token;
+
+            cancel.Cancel();
+            var routeTask = route.Send(media, t => handler, request);
+            //standard async pattern throws on cancellation
+            Should.Throw<TaskCanceledException>(async () => await routeTask);
+
+            routeTask.IsCanceled.ShouldBeTrue();
+            handler.HasHandled.ShouldBeFalse();
+            media.HasWritten.ShouldBeFalse();
         }
     }
 }

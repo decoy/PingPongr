@@ -12,10 +12,10 @@
         where TRequest : IRouteRequest<TResponse>
     {
         /// <summary>
-        /// Asynchronously handles a request
+        /// Asynchronously handles a request allowing for cancellation
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="cancellationToken"></param>
+        /// <param name="message">The <see cref="IRouteRequest{TResponse}"/> to be handled</param>
+        /// <param name="cancellationToken">the cancellation token</param>
         /// <returns></returns>
         Task<TResponse> Handle(TRequest message, CancellationToken cancellationToken);
     }

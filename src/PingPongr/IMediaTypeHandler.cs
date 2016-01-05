@@ -22,6 +22,7 @@
         /// </summary>
         /// <typeparam name="T">The type to be deserialized from the stream</typeparam>
         /// <param name="inputStream">the stream to be read from</param>
+        /// <param name="cancellationToken">the request cancellation token</param>
         /// <returns>an awaitable task with the results of the deserialized stream</returns>
         Task<T> Read<T>(Stream inputStream, CancellationToken cancellationToken);
 
@@ -31,6 +32,7 @@
         /// <param name="content">the object to be written</param>
         /// <param name="outputStream">the stream to write to</param>
         /// <param name="context">the request context (to set response media types)</param>
+        /// <param name="cancellationToken">the request cancellation token</param>
         /// <returns>An awaitable taks</returns>
         Task Write(object content, Stream outputStream, IRequestContext context, CancellationToken cancellationToken);
     }
