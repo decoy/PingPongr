@@ -40,8 +40,8 @@ A functional, self hosted example using SimpleInjector
 
 ```C#
     using Owin;
-    using OwinSupport;
     using PingPongr;
+    using PingPongr.OwinSupport;
     using SimpleInjector;
     using System;
 
