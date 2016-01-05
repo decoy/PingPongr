@@ -1,8 +1,8 @@
-﻿namespace PingPongr.Mediator
+﻿namespace PingPongr
 {
     /// <summary>
     /// A basic request that expects a response
     /// </summary>
     /// <typeparam name="TResponse">The response type</typeparam>
-    public interface IRequest<out TResponse> { }
+    public interface IRouteRequest<out TResponse> { }
 }

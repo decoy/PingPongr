@@ -1,8 +1,10 @@
 ﻿namespace PingPongr.OwinSupport
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Threading;
 
     /// <summary>
     /// Wrapper for the Owin context environment dictionary
@@ -43,6 +45,8 @@
             set { ResponseHeaders["Content-Type"] = value.ToArray(); }
         }
 
+        public CancellationToken CancellationToken { get; private set; }
+
         public OwinContext(IDictionary<string, object> env, string routePrefix)
         {
             environment = env;
@@ -65,6 +69,8 @@
 
             ResponseHeaders = (IDictionary<string, string[]>)env[OwinKeys.ResponseHeaders];
             ResponseBody = (Stream)env[OwinKeys.ResponseBody];
+
+            CancellationToken = (CancellationToken)env[OwinKeys.CallCancelled];
         }
     }
 }

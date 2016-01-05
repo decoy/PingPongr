@@ -2,6 +2,7 @@
 {
     using System.Collections.Generic;
     using System.IO;
+    using System.Threading;
 
     /// <summary>
     /// Defines a route request
@@ -32,6 +33,11 @@
         /// The response body stream
         /// </summary>
         Stream ResponseBody { get; }
+
+        /// <summary>
+        /// Cancellation token for the request
+        /// </summary>
+        CancellationToken CancellationToken { get; }
 
         /// <summary>
         /// List of the response body stream medias

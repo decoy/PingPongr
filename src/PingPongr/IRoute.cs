@@ -1,7 +1,7 @@
 ﻿namespace PingPongr
 {
-    using Mediator;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
     /// Defines a route action for a particular path.

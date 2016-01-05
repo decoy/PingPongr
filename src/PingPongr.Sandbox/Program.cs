@@ -1,15 +1,14 @@
 ﻿namespace PingPongr.Sandbox
 {
     using Handlers;
-    using Mediator;
     using Microsoft.Owin;
     using Microsoft.Owin.FileSystems;
     using Microsoft.Owin.StaticFiles;
     using Owin;
     using OwinSupport;
     using SimpleInjector;
-    using System.IO;
     using System;
+    using System.IO;
 
     public class Program
     {
@@ -47,8 +46,8 @@
                 container.RegisterCollection<IMediaTypeHandler>(new[] { new DefaultJsonMediaHandler() });
 
                 //TODO more examples!
-                container.Register(typeof(IRequestAsyncHandler<,>), assemblies);
-                container.RegisterDecorator(typeof(IRequestAsyncHandler<,>), typeof(LoggingDecorator<,>));
+                container.Register(typeof(IRouteRequestHandler<,>), assemblies);
+                container.RegisterDecorator(typeof(IRouteRequestHandler<,>), typeof(LoggingDecorator<,>));
 
                 //build our routes and register.
                 var routes = RouteBuilder

@@ -1,7 +1,7 @@
 ﻿namespace PingPongr
 {
-    using Mediator;
     using System.Threading.Tasks;
+    using System.Threading;
 
     /// <summary>
     /// The route wrapper implementation.
@@ -9,9 +9,8 @@
     /// </summary>
     /// <typeparam name="TRequest"></typeparam>
     /// <typeparam name="TResponse"></typeparam>
-    public class Route<TRequest, TResponse>
-        : RequestMediator<TRequest, TResponse>, IRoute
-        where TRequest : IRequest<TResponse>
+    public class Route<TRequest, TResponse> : IRoute
+        where TRequest : IRouteRequest<TResponse>
     {
         public string Path { get; set; }
 
@@ -24,9 +23,16 @@
         /// <returns>the awaitable task representing the routing operation</returns>
         public async Task Send(IMediaTypeHandler mediaHandler, InstanceFactory factory, IRequestContext context)
         {
-            var req = await mediaHandler.Read<TRequest>(context.RequestBody);
-            var resp = await SendAsync(factory, req);
-            await mediaHandler.Write(resp, context.ResponseBody, context);
+            var req = await mediaHandler.Read<TRequest>(context.RequestBody, context.CancellationToken);
+            var resp = await SendAsync(factory, req, context.CancellationToken);
+            await mediaHandler.Write(resp, context.ResponseBody, context, context.CancellationToken);
+        }
+
+        private static Task<TResponse> SendAsync(InstanceFactory factory, IRouteRequest<TResponse> msg, CancellationToken cancellationToken)
+        {
+            return factory
+                .Resolve<IRouteRequestHandler<TRequest, TResponse>>()
+                .Handle((TRequest)msg, cancellationToken);
         }
     }
 }

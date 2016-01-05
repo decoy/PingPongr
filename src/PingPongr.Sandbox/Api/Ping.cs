@@ -1,6 +1,6 @@
 ﻿namespace PingPongr.Sandbox.Api
 {
-    public class Ping : Mediator.IRequest<Pong>
+    public class Ping : IRouteRequest<Pong>
     {
         public string Hi { get; set; }
     }

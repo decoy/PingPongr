@@ -1,4 +1,4 @@
-﻿namespace PingPongr.Mediator
+﻿namespace PingPongr
 {
     using System.Threading;
     using System.Threading.Tasks;
@@ -8,8 +8,8 @@
     /// </summary>
     /// <typeparam name="TRequest"></typeparam>
     /// <typeparam name="TResponse"></typeparam>
-    public interface IRequestCancellableAsyncHandler<in TRequest, TResponse>
-        where TRequest : IRequest<TResponse>
+    public interface IRouteRequestHandler<in TRequest, TResponse>
+        where TRequest : IRouteRequest<TResponse>
     {
         /// <summary>
         /// Asynchronously handles a request

@@ -1,15 +1,15 @@
 ﻿namespace PingPongr.Tests
 {
-    using Mediator;
     using Shouldly;
     using System.Collections.Generic;
     using System.IO;
+    using System.Threading;
     using System.Threading.Tasks;
     using Xunit;
 
     public class RouterTests
     {
-        public class Ping : IRequest<Pong>
+        public class Ping : IRouteRequest<Pong>
         {
             public string Message { get; set; }
         }
@@ -19,10 +19,10 @@
             public string Message { get; set; }
         }
 
-        public class FakeHandler : IRequestAsyncHandler<Ping, Pong>
+        public class FakeHandler : IRouteRequestHandler<Ping, Pong>
         {
             public bool HasHandled { get; private set; }
-            public Task<Pong> Handle(Ping message)
+            public Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
             {
                 HasHandled = true;
                 return Task.FromResult(new Pong { Message = "FakePong" });
@@ -40,13 +40,13 @@
                 return true;
             }
 
-            public Task<T> Read<T>(Stream inputStream)
+            public Task<T> Read<T>(Stream inputStream, CancellationToken cancellationToken)
             {
                 HasRead = true;
                 return Task.FromResult(default(T));
             }
 
-            public Task Write(object content, Stream outputStream, IRequestContext context)
+            public Task Write(object content, Stream outputStream, IRequestContext context, CancellationToken cancellationToken)
             {
                 HasWritten = true;
                 return Task.FromResult(0);
@@ -66,6 +66,8 @@
             public Stream ResponseBody { get; set; }
 
             public IEnumerable<string> ResponseMediaTypes { get; set; }
+
+            public CancellationToken CancellationToken { get; set; }
         }
 
         public class FakeRoute : IRoute

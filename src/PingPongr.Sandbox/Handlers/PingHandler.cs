@@ -1,14 +1,14 @@
 ﻿namespace PingPongr.Sandbox.Handlers
 {
     using Api;
-    using Mediator;
+    using System.Threading;
     using System.Threading.Tasks;
 
-    public class PingHandler : IRequestAsyncHandler<Ping, Pong>
+    public class PingHandler : IRouteRequestHandler<Ping, Pong>
     {
-        public async Task<Pong> Handle(Ping message)
+        public async Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
         {
-            return await Task.Factory.StartNew(() => new Pong { Reply = message.Hi + " Pong" });
+            return await Task.FromResult(new Pong { Reply = message.Hi + " Pong" });
         }
     }
 }
