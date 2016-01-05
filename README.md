@@ -41,6 +41,7 @@ A functional, self hosted example using SimpleInjector
 ```C#
     using Owin;
     using OwinSupport;
+    using PingPongr;
     using SimpleInjector;
     using System;
 
