@@ -15,11 +15,11 @@
             return mediaType == "application/json";
         }
 
-        public static Task<string> GetStringFromStreamAsync(Stream stream)
+        public static async Task<string> GetStringFromStreamAsync(Stream stream)
         {
             using (StreamReader reader = new StreamReader(stream))
             {
-                return reader.ReadToEndAsync();
+                return await reader.ReadToEndAsync();
             }
         }
 
@@ -30,13 +30,13 @@
             return SimpleJson.DeserializeObject<T>(json);
         }
 
-        public Task Write(object content, Stream outputStream, IRequestContext context, CancellationToken cancellationToken)
+        public async Task Write(object content, Stream outputStream, IRequestContext context, CancellationToken cancellationToken)
         {
             context.ResponseMediaTypes = new[] { "application/json" };
 
             using (StreamWriter writer = new StreamWriter(outputStream))
             {
-                return writer.WriteAsync(SimpleJson.SerializeObject(content));
+                await writer.WriteAsync(SimpleJson.SerializeObject(content));
             }
         }
     }
