@@ -1,18 +1,20 @@
 {
-  
+  "version": "1.0.0-*",
   "buildOptions": {
     "emitEntryPoint": true
   },
 
   "dependencies": {
-    "Microsoft.Owin.SelfHost": "3.0.1",
-    "Microsoft.Owin.StaticFiles": "3.0.1",
-    "PingPongr": { "target": "project" },
-    "SimpleInjector": "3.1.2",
-    "SimpleInjector.Extensions.ExecutionContextScoping": "3.1.2"
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.1"
+    },
+    "PingPongr": "0.3.1-alpha-*"
   },
 
   "frameworks": {
-    "net45": { }
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
+    }
   }
 }
