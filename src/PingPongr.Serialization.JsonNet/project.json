@@ -1,0 +1,13 @@
+﻿{
+  "version": "1.0.0-*",
+
+  "dependencies": {
+    "Newtonsoft.Json": "9.0.1",
+    "PingPongr": "0.3.1-alpha-*"
+  },
+
+  "frameworks": {
+    "netstandard1.0": {
+    }
+  }
+}
