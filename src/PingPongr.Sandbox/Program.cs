@@ -19,7 +19,8 @@
                 var container = BuildContainer();
 
                 app.UseSimpleInjectorMiddleware(container);
-                app.UsePingPongr(container.GetInstance<IRouter>(), "/api");
+                app.Use(OwinAppHelpers.UsePingPongr(container.GetInstance<IRouter>(), "/api"));
+                //app.UsePingPongr(container.GetInstance<IRouter>(), "/api");
 
                 //static file hosting for the test client
                 var dir = Directory.CreateDirectory("./web");

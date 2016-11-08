@@ -4,6 +4,7 @@
     using System.Linq;
     using Xunit;
 
+
     public class RouteBuilderTests
     {
         public class Ping : IRouteRequest<Pong>
@@ -33,7 +34,8 @@
         [Fact]
         public void ShouldFilterRoutes()
         {
-            var builder = new RouteBuilder(new[] { typeof(RouteBuilderTests).Assembly });
+
+            var builder = new RouteBuilder(new[] { System.Reflection.Assembly.GetEntryAssembly() });
 
             builder.Filter(t => t.FullName.Contains("RouteBuilderTests"));
             var routes = builder.GetRoutes();
@@ -48,7 +50,7 @@
         [Fact]
         public void ShouldSetPathsForRoutes()
         {
-            var builder = new RouteBuilder(new[] { typeof(RouteBuilderTests).Assembly });
+            var builder = new RouteBuilder(new[] {  System.Reflection.Assembly.GetEntryAssembly() });
             builder.Filter(t => t.FullName.Contains("RouteBuilderTests"));
 
             builder.Path(t => "/BuilderTest/" + t.Name);

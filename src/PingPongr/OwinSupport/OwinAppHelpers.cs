@@ -1,6 +1,6 @@
 ﻿namespace PingPongr.OwinSupport
 {
-    using Owin;
+    //using Owin;
 
     using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>,
       System.Threading.Tasks.Task>;
@@ -18,10 +18,10 @@
         /// <param name="router">an instance of a PingPongr router</param>
         /// <param name="routePrefix">Optional route prefix.  The router will only handle paths that have this prefix.  If null, will handle all paths.</param>
         /// <returns></returns>
-        public static IAppBuilder UsePingPongr(this IAppBuilder app, IRouter router, string routePrefix = null)
-        {
-            return app.Use(UsePingPongr(router, routePrefix));
-        }
+        //public static IAppBuilder UsePingPongr(this IAppBuilder app, IRouter router, string routePrefix = null)
+        //{
+        //    return app.Use(UsePingPongr(router, routePrefix));
+        //}
 
         public static MidFunc UsePingPongr(IRouter router, string routePrefix = null)
         {

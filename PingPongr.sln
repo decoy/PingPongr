@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D39D1253-9BDA-4A4B-8701-2B2AE12193D0}"
 	ProjectSection(SolutionItems) = preProject
@@ -15,6 +15,8 @@ EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PingPongr.Tests", "src\PingPongr.Tests\PingPongr.Tests.xproj", "{95B3C5B9-31C2-4B7E-BA3A-0EE499E67F05}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PingPongr.Sandbox", "src\PingPongr.Sandbox\PingPongr.Sandbox.xproj", "{B493AE86-67BD-41B3-8BBE-F9E54481E449}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PingPongr.JsonNet", "src\PingPongr.JsonNet\PingPongr.JsonNet.xproj", "{386103D2-230B-4F08-AAB7-7747ADC8680C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -34,6 +36,10 @@ Global
 		{B493AE86-67BD-41B3-8BBE-F9E54481E449}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B493AE86-67BD-41B3-8BBE-F9E54481E449}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B493AE86-67BD-41B3-8BBE-F9E54481E449}.Release|Any CPU.Build.0 = Release|Any CPU
+		{386103D2-230B-4F08-AAB7-7747ADC8680C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{386103D2-230B-4F08-AAB7-7747ADC8680C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{386103D2-230B-4F08-AAB7-7747ADC8680C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{386103D2-230B-4F08-AAB7-7747ADC8680C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -42,5 +48,6 @@ Global
 		{F96B9F2F-464D-4D48-8DEE-6585E5DB8199} = {F1CD2002-1249-451E-BB13-A1DC7127E274}
 		{95B3C5B9-31C2-4B7E-BA3A-0EE499E67F05} = {F1CD2002-1249-451E-BB13-A1DC7127E274}
 		{B493AE86-67BD-41B3-8BBE-F9E54481E449} = {F1CD2002-1249-451E-BB13-A1DC7127E274}
+		{386103D2-230B-4F08-AAB7-7747ADC8680C} = {F1CD2002-1249-451E-BB13-A1DC7127E274}
 	EndGlobalSection
 EndGlobal

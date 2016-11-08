@@ -1,5 +1,6 @@
 {
-  "compilationOptions": {
+  
+  "buildOptions": {
     "emitEntryPoint": true
   },
 
@@ -11,12 +12,7 @@
     "SimpleInjector.Extensions.ExecutionContextScoping": "3.1.2"
   },
 
-  "commands": {
-    "PingPongr.Sandbox": "PingPongr.Sandbox"
-  },
-
   "frameworks": {
-    "net45": { },
-    "dnx451": { }
+    "net45": { }
   }
 }
