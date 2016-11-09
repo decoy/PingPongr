@@ -17,6 +17,10 @@
     using System.Globalization;
     using Microsoft.AspNetCore.StaticFiles.Infrastructure;
     using Microsoft.Extensions.FileProviders;
+    using SimpleInjector.Advanced;
+    using SimpleInjector;
+    using Services;
+    using PingPongr;
 
     public class Program
     {
@@ -24,22 +28,21 @@
         {
             public void Configure(IApplicationBuilder app)
             {
-                var assemblies = new[] { typeof(Program).GetTypeInfo().Assembly };
+                var container = BuildContainer();
 
-                var routes = RouteBuilder
-                    .WithAssemblies(assemblies)  //limit our search to this assembly
-                    .Filter(t => t.FullName.StartsWith("PingPongr.Sandbox.Api")) //limit to api namespace
-                    .Path(t => "/" + t.Name.ToLower()) //override default path naming
-                    .GetRoutes();
+                //allow us to inject the httpcontext in our handlers
+                RegisterContextAccessor(container, app);
 
-                var media = new[] { new JsonNetMedialHandler() };
-                var router = new Router(routes, media, t => new PingHandler());
-
+                //register PingPongr!
+                //Note: PingPongr uses Owin registration for maximum compatibility
+                //Include Microsoft.AspNetCore.Owin to use this with Kestrel
                 app.UseOwin(pipeline =>
                 {
-                    pipeline.UsePingPongr(router, "/api");
+                    pipeline.UsePingPongr(container.GetInstance<Router>(), "/api");
                 });
 
+                //setup kestrel for static file hosting for our little demo file
+                app.UseDefaultFiles();
                 app.UseStaticFiles(new StaticFileOptions()
                 {
                     FileProvider = new PhysicalFileProvider(
@@ -47,73 +50,58 @@
                     RequestPath = new PathString("/web"),
                 });
             }
+
+            public void RegisterContextAccessor(Container container, IApplicationBuilder app)
+            {
+                //this allows some special magic for thread local access to the http context.
+                //normally MVC does this as part of its pipeline.
+                IHttpContextAccessor accessor = container.GetInstance<IHttpContextAccessor>();
+                app.Use(next => ctx =>
+                {
+                    accessor.HttpContext = ctx; //set the context appropriately
+                    return next(ctx);
+                });
+            }
+
+            public Container BuildContainer()
+            {
+                //setup the container
+                var container = new Container();
+                var assemblies = new[] { typeof(Program).GetTypeInfo().Assembly };
+
+                //this is the router's path to grabbing new request handler instances
+                container.RegisterSingleton(new InstanceFactory(container.GetInstance));
+
+                //Our default media handler
+                container.RegisterCollection<IMediaTypeHandler>(new[] { new JsonNetMedialHandler() });
+
+                //TODO more examples!
+                container.Register(typeof(IRouteRequestHandler<,>), assemblies);
+                container.RegisterDecorator(typeof(IRouteRequestHandler<,>), typeof(LoggingDecorator<,>));
+
+                //build our routes and register.
+                var routes = RouteBuilder
+                    .WithAssemblies(assemblies)  //limit our search to this assembly
+                    .Filter(t => t.FullName.StartsWith("PingPongr.Sandbox.Api")) //limit to api namespace
+                    .Path(t => "/" + t.Name.ToLower()) //override default path naming
+                    .GetRoutes();
+                container.RegisterCollection(routes);
+
+                //the default router implementation
+                container.Register<IRouter, Router>();
+
+                /// https://simpleinjector.org/blog/2016/07/working-around-the-asp-net-core-di-abstraction/
+                container.RegisterSingleton<IHttpContextAccessor, HttpContextAccessor>();
+                container.RegisterSingleton<IUserContext, AspNetUserContext>();
+
+                container.Verify();
+
+                return container;
+            }
         }
-
-
-        //{
-        //    public class Startup
-        //    {
-        //        public void Configuration(IAppBuilder app)
-        //        {
-        //            var container = BuildContainer();
-
-        //            app.UseSimpleInjectorMiddleware(container);
-        //            app.Use(OwinAppHelpers.UsePingPongr(container.GetInstance<IRouter>(), "/api"));
-        //            //app.UsePingPongr(container.GetInstance<IRouter>(), "/api");
-
-        //            //static file hosting for the test client
-        //            var dir = Directory.CreateDirectory("./web");
-        //            Console.WriteLine("Hosting files from: " + dir.FullName);
-        //            app.UseFileServer(new FileServerOptions()
-        //            {
-        //                FileSystem = new PhysicalFileSystem(dir.FullName),
-        //                RequestPath = new PathString("/web"),
-        //            });
-
-        //            app.UseWelcomePage("/");
-        //        }
-
-        //        public Container BuildContainer()
-        //        {
-        //            //setup the container
-        //            var container = new Container();
-        //            var assemblies = new[] { typeof(Program).Assembly };
-
-        //            //this is the router's path to grabbing new request handler instances
-        //            container.RegisterSingleton(new InstanceFactory(container.GetInstance));
-
-        //            //Our default media handler
-        //            container.RegisterCollection<IMediaTypeHandler>(new[] { new DefaultJsonMediaHandler() });
-
-        //            //TODO more examples!
-        //            container.Register(typeof(IRouteRequestHandler<,>), assemblies);
-        //            container.RegisterDecorator(typeof(IRouteRequestHandler<,>), typeof(LoggingDecorator<,>));
-
-        //            //build our routes and register.
-        //            var routes = RouteBuilder
-        //                .WithAssemblies(assemblies)  //limit our search to this assembly
-        //                .Filter(t => t.FullName.StartsWith("PingPongr.Sandbox.Api")) //limit to api namespace
-        //                .Path(t => "/" + t.Name.ToLower()) //override default path naming
-        //                .GetRoutes();
-        //            container.RegisterCollection(routes);
-
-        //            //the default router implementation
-        //            container.Register<IRouter, Router>();
-
-        //            //get owin context from handlers: http://simpleinjector.readthedocs.org/en/latest/owinintegration.html
-        //            container.RegisterSingleton<IOwinContextProvider>(new CallContextOwinContextProvider());
-
-        //            container.Verify();
-
-        //            return container;
-        //        }
-        //    }
 
         public static void Main(string[] args)
         {
-            //var dir = Directory.CreateDirectory("./web");
-            //Console.WriteLine("Hosting files from: " + dir.FullName);
-
             var host = new WebHostBuilder()
                .UseKestrel()
                .UseStartup<Startup>()
