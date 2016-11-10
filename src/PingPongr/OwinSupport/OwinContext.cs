@@ -20,7 +20,7 @@
         public string Method { get; private set; }
 
         public string Path { get; private set; }
-        
+
 
         public IDictionary<string, string[]> RequestHeaders { get; private set; }
         public Stream RequestBody { get; private set; }
@@ -43,6 +43,27 @@
         {
             get { return ResponseHeaders["Content-Type"]; }
             set { ResponseHeaders["Content-Type"] = value.ToArray(); }
+        }
+
+        public int ContentLength
+        {
+            get
+            {
+                var len = ResponseHeaders["Content-Length"].FirstOrDefault();
+                int res = 0;
+                if (len != null && int.TryParse(len, out res))
+                {
+                    return res;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+            set
+            {
+                ResponseHeaders["Content-Length"] = new[] { value.ToString() };
+            }
         }
 
         public CancellationToken CancellationToken { get; private set; }

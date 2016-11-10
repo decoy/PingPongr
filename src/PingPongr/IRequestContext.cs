@@ -45,5 +45,10 @@
         /// </summary>
         IEnumerable<string> ResponseMediaTypes { get; set; }
 
+        /// <summary>
+        /// Length of the content in the response body
+        /// </summary>
+        int ContentLength { get; set; }
+
     }
 }

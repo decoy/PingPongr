@@ -81,6 +81,8 @@
             public IEnumerable<string> ResponseMediaTypes { get; set; }
 
             public CancellationToken CancellationToken { get; set; }
+
+            public int ContentLength { get; set; }
         }
 
         public class FakeRoute : IRoute

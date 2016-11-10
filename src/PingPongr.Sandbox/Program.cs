@@ -1,26 +1,17 @@
 ﻿namespace PingPongr.Sandbox
 {
     using Handlers;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.FileProviders;
     using OwinSupport;
+    using Serialization.JsonNet;
+    using Services;
+    using SimpleInjector;
     using System;
     using System.IO;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Http;
-    using Microsoft.AspNetCore.Hosting;
     using System.Reflection;
-    using PingPongr.Serialization.JsonNet;
-    using Microsoft.Extensions.Configuration;
-    using Microsoft.AspNetCore.Owin;
-    using System.Threading.Tasks;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Globalization;
-    using Microsoft.AspNetCore.StaticFiles.Infrastructure;
-    using Microsoft.Extensions.FileProviders;
-    using SimpleInjector.Advanced;
-    using SimpleInjector;
-    using Services;
-    using PingPongr;
 
     public class Program
     {
@@ -30,12 +21,15 @@
             {
                 var container = BuildContainer();
 
+                //register a custom error handler middleware
+                RegisterErrorHandler(app);
+
                 //allow us to inject the httpcontext in our handlers
                 RegisterContextAccessor(container, app);
 
                 //register PingPongr!
                 //Note: PingPongr uses Owin registration for maximum compatibility
-                //Include Microsoft.AspNetCore.Owin to use this with Kestrel
+                //Include package Microsoft.AspNetCore.Owin to use this with Kestrel
                 app.UseOwin(pipeline =>
                 {
                     pipeline.UsePingPongr(container.GetInstance<Router>(), "/api");
@@ -51,7 +45,24 @@
                 });
             }
 
-            public void RegisterContextAccessor(Container container, IApplicationBuilder app)
+            public static void RegisterErrorHandler(IApplicationBuilder app)
+            {
+                //Use whatever error handling middleware you want!
+                app.Use(next => async (ctx) =>
+                {
+                    try
+                    {
+                        await next(ctx);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("There was an error!: " + ex.Message);
+                        ctx.Response.StatusCode = 500;
+                    }
+                });
+            }
+
+            public static void RegisterContextAccessor(Container container, IApplicationBuilder app)
             {
                 //this allows some special magic for thread local access to the http context.
                 //normally MVC does this as part of its pipeline.
@@ -63,7 +74,7 @@
                 });
             }
 
-            public Container BuildContainer()
+            public static Container BuildContainer()
             {
                 //setup the container
                 var container = new Container();
