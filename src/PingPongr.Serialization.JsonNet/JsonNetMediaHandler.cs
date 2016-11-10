@@ -9,7 +9,7 @@
     /// A simple default media type handler.
     /// Uses <see cref="SimpleJson"/> internally
     /// </summary>
-    public class JsonNetMedialHandler : IMediaTypeHandler
+    public class JsonNetMediaHandler : IMediaTypeHandler
     {
         private readonly JsonSerializer serializer;
         private static readonly Task CompletedTask = Task.FromResult(false);
@@ -17,7 +17,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="JsonNetSerializer"/> class.
         /// </summary>
-        public JsonNetMedialHandler()
+        public JsonNetMediaHandler()
         {
             this.serializer = JsonSerializer.CreateDefault();
         }
@@ -27,7 +27,7 @@
         /// with the provided <paramref name="serializer"/>.
         /// </summary>
         /// <param name="serializer">Json converters used when serializing.</param>
-        public JsonNetMedialHandler(JsonSerializer serializer)
+        public JsonNetMediaHandler(JsonSerializer serializer)
         {
             this.serializer = serializer;
         }

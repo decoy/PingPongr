@@ -32,16 +32,16 @@
         {
             return next => async env =>
             {
-                var context = new OwinContext(env, routePrefix);
+                var path = (string)env[OwinKeys.RequestPath];
 
-                if (routePrefix == null || context.RequestPath.StartsWith(routePrefix))
+                if (routePrefix == null || (path != null && path.StartsWith(routePrefix)))
                 {
+                    var context = new OwinContext(env, routePrefix);
                     await router.RouteRequest(context);
+                    context.StatusCode = context.IsHandled ? 200 : 404;
                 }
-
-                if (!context.IsHandled)
+                else
                 {
-                    context.StatusCode = 404;
                     await next(env);
                 }
             };

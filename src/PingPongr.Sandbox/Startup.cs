@@ -18,13 +18,9 @@
         {
             var container = BuildContainer();
 
-            //register a custom error handler middleware
-            RegisterErrorHandler(app);
-
-            //allow us to inject the httpcontext in our handlers
+            //register our optional example app middlewares.
+            RegisterErrorHandler(app); //must be registered first
             RegisterContextAccessor(container, app);
-
-            //our sandbox example has a sample page
             RegisterFileHosting(app);
 
             //register PingPongr!
@@ -69,6 +65,7 @@
         {
             //this allows some special magic for thread local access to the http context.
             //normally MVC does this as part of its pipeline.
+            //this isn't required by PingPongr but is used by the logging handler
             IHttpContextAccessor accessor = container.GetInstance<IHttpContextAccessor>();
             app.Use(next => ctx =>
             {
@@ -83,12 +80,6 @@
             var container = new Container();
             var assemblies = new[] { typeof(Program).GetTypeInfo().Assembly };
 
-            //this is the router's path to grabbing new request handler instances
-            container.RegisterSingleton(new InstanceFactory(container.GetInstance));
-
-            //Our default media handler
-            container.RegisterCollection<IMediaTypeHandler>(new[] { new JsonNetMedialHandler() });
-
             //TODO more examples!
             container.Register(typeof(IRouteRequestHandler<,>), assemblies);
             container.RegisterDecorator(typeof(IRouteRequestHandler<,>), typeof(LoggingDecorator<,>));
@@ -100,6 +91,12 @@
                 .Path(t => "/" + t.Name.ToLower()) //override default path naming
                 .GetRoutes();
             container.RegisterCollection(routes);
+
+            //register the default media handler
+            container.Register<IMediaTypeHandler, JsonNetMediaHandler>();
+
+            //this is the router's path to grabbing new request handler instances
+            container.RegisterSingleton(new InstanceFactory(container.GetInstance));
 
             //the default router implementation
             container.Register<IRouter, Router>();
