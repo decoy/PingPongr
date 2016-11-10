@@ -4,8 +4,8 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.Extensions.FileProviders;
-    using OwinSupport;
-    using Serialization.JsonNet;
+    using PingPongr.OwinSupport;
+    using PingPongr.Serialization.JsonNet;
     using Services;
     using SimpleInjector;
     using System;
@@ -65,7 +65,7 @@
         {
             //this allows some special magic for thread local access to the http context.
             //normally MVC does this as part of its pipeline.
-            //this isn't required by PingPongr but is used by the logging handler
+            //this isn't required by PingPongr but is used by the example logging handler
             IHttpContextAccessor accessor = container.GetInstance<IHttpContextAccessor>();
             app.Use(next => ctx =>
             {
