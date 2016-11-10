@@ -81,6 +81,8 @@
             public IEnumerable<string> ResponseMediaTypes { get; set; }
 
             public CancellationToken CancellationToken { get; set; }
+
+            public int ContentLength { get; set; }
         }
 
         public class FakeRoute : IRoute
@@ -155,7 +157,7 @@
             cancel.Cancel();
             var routeTask = route.Send(media, t => handler, request);
             //standard async pattern throws on cancellation
-            Should.Throw<TaskCanceledException>(async () => await routeTask);
+            Should.ThrowAsync<OperationCanceledException>(routeTask);
 
             routeTask.IsCanceled.ShouldBeTrue();
             handler.HasHandled.ShouldBeFalse();

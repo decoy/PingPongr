@@ -43,7 +43,7 @@
             //defaults
             pathBuilder = t => "/" + t.FullName.Replace(".", "/");
 
-            this.types = assemblies.SelectMany(s => s.GetTypes())
+            this.types = assemblies.SelectMany(s => s.ExportedTypes)
               .Where(IsRequest);
         }
 
@@ -87,8 +87,10 @@
 
         private static bool IsRequest(Type type)
         {
-            return !type.IsAbstract && !type.IsInterface && type.GetInterfaces()
-                .Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>));
+            var info = type.GetTypeInfo();
+            
+            return !info.IsAbstract && !info.IsInterface && info.ImplementedInterfaces
+                .Any(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>));
         }
 
         private static IRoute FromType(Type requestType)
@@ -104,9 +106,9 @@
         /// </summary>
         private static Type GetResponseType(Type requestType)
         {
-            return requestType.GetInterfaces()
-                .Single(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>))
-                .GetGenericArguments()
+            return requestType.GetTypeInfo().ImplementedInterfaces
+                .Single(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>))
+                .GetTypeInfo().GenericTypeArguments
                 .Single();
         }
     }

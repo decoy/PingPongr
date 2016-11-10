@@ -1,17 +1,26 @@
 {
-  "version": "0.2.1-alpha-*",
+  "version": "0.4.0-*",
   "description": "PingPongr Class Library",
-  "authors": [ "Kellen Piffner" ],
-  "tags": [ "owin" ],
-
-  "projectUrl": "https://github.com/decoy/PingPongr",
-  "licenseUrl": "https://github.com/decoy/PingPongr/blob/master/LICENSE",
-  
-  "frameworks": {
-    "net45": { },
-    "dnx451": { }
+  "authors": [
+    "Kellen Piffner"
+  ],
+  "packOptions": {
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/decoy/PingPongr"
+    },
+    "tags": [
+      "owin",
+      "rpc"
+    ],
+    "projectUrl": "https://github.com/decoy/PingPongr",
+    "licenseUrl": "https://github.com/decoy/PingPongr/blob/master/LICENSE"
   },
   "dependencies": {
-    "Owin": "1.0.0"
+    "NETStandard.Library": "1.6.0"
+  },
+  "frameworks": {
+    "netstandard1.0": {
+    }
   }
 }

@@ -39,21 +39,23 @@ Your main API consists of the request, the response, and the core handler that p
 A functional, self hosted example using SimpleInjector
 
 ```C#
-    using Owin;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
     using PingPongr;
     using PingPongr.OwinSupport;
+    using Serialization.JsonNet;
     using SimpleInjector;
-    using System;
+    using System.Reflection;
 
     public class Program
     {
         public class Startup
         {
-            public void Configuration(IAppBuilder app)
+            public void Configure(IApplicationBuilder app)
             {
                 //setup the container
                 var container = new Container();
-                var assemblies = new[] { typeof(Program).Assembly };
+                var assemblies = new[] { typeof(Program).GetTypeInfo().Assembly };
 
                 //register all the route request handlers
                 container.Register(typeof(IRouteRequestHandler<,>), assemblies);
@@ -63,31 +65,37 @@ A functional, self hosted example using SimpleInjector
                 //an instance factory is how request handlers are built from the container.
                 var factory = new InstanceFactory(container.GetInstance);
 
-                //the lib comes with a json media handler built with SimpleJson
-                var mediaHandlers = new[] { new DefaultJsonMediaHandler() };
+                //Using the PingPongr.Serialization.JsonNet media handler
+                var mediaHandlers = new[] { new JsonNetMediaHandler() };
 
                 //the routes are found using reflection via the RouteBuilder
                 var routes = RouteBuilder.WithAssemblies(assemblies).GetRoutes();
-                foreach (var r in routes) Console.WriteLine(r.Path);
 
                 //setup the PingPongr router
-                //(Note: we're setting this up manually, but it could be created by the container)
                 IRouter router = new Router(
                     routes,
                     mediaHandlers,
                     factory
                     );
 
-                app.UsePingPongr(router);
+                //register PingPongr using Owin
+                //Using package Microsoft.AspNetCore.Owin
+                app.UseOwin(owin =>
+                {
+                    owin.UsePingPongr(container.GetInstance<Router>(), "/api");
+                });
             }
         }
 
         public static void Main(string[] args)
         {
-            using (Microsoft.Owin.Hosting.WebApp.Start<Startup>("http://localhost:12345"))
-            {
-                Console.ReadLine();
-            }
+            var host = new WebHostBuilder()
+                .UseKestrel()
+                .UseStartup<Startup>()
+                .UseUrls("http://localhost:12345")
+                .Build();
+
+            host.Run();
         }
     }
 ```

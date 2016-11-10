@@ -1,7 +1,5 @@
 ﻿namespace PingPongr.OwinSupport
 {
-    using Owin;
-
     using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>,
       System.Threading.Tasks.Task>;
 
@@ -9,33 +7,43 @@
             System.Threading.Tasks.Task>, System.Func<System.Collections.Generic.IDictionary<string, object>,
             System.Threading.Tasks.Task>>;
 
+    using PipeFunc = System.Action<System.Func<System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>, System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>>>;
+
     public static class OwinAppHelpers
     {
         /// <summary>
-        /// Use the PingPongr as Owin middleware.
+        /// Attaches PingPongr to an Owin Middleware pipeline.
         /// </summary>
-        /// <param name="app">The app to attach to</param>
-        /// <param name="router">an instance of a PingPongr router</param>
-        /// <param name="routePrefix">Optional route prefix.  The router will only handle paths that have this prefix.  If null, will handle all paths.</param>
-        /// <returns></returns>
-        public static IAppBuilder UsePingPongr(this IAppBuilder app, IRouter router, string routePrefix = null)
+        /// <param name="pipeline">The pipeline function</param>
+        /// <param name="router">The PingPongr router</param>
+        /// <param name="routePrefix">An optional prefix filter.  Incoming urls must start with this prefix.</param>
+        public static void UsePingPongr(this PipeFunc pipeline, IRouter router, string routePrefix = null)
         {
-            return app.Use(UsePingPongr(router, routePrefix));
+            pipeline(UsePingPongr(router, routePrefix));
         }
 
+        /// <summary>
+        /// Generates a middleware function for PingPongr
+        /// </summary>
+        /// <param name="router">The PingPongr router</param>
+        /// <param name="routePrefix">An optional prefix filter.  Incoming urls must start with this prefix.</param>
+        /// <returns>A standard owin middleware function</returns>
         public static MidFunc UsePingPongr(IRouter router, string routePrefix = null)
         {
             return next => async env =>
             {
-                var context = new OwinContext(env, routePrefix);
+                var path = (string)env[OwinKeys.RequestPath];
 
-                if (routePrefix == null || context.RequestPath.StartsWith(routePrefix))
+                if (routePrefix == null || (path != null && path.StartsWith(routePrefix)))
                 {
+                    var context = new OwinContext(env, routePrefix);
                     await router.RouteRequest(context);
-
                     context.StatusCode = context.IsHandled ? 200 : 404;
                 }
-                await next(env);
+                else
+                {
+                    await next(env);
+                }
             };
         }
     }

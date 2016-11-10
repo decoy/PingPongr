@@ -3,6 +3,8 @@
     using Shouldly;
     using System.Linq;
     using Xunit;
+    using System.Reflection;
+
 
     public class RouteBuilderTests
     {
@@ -33,7 +35,7 @@
         [Fact]
         public void ShouldFilterRoutes()
         {
-            var builder = new RouteBuilder(new[] { typeof(RouteBuilderTests).Assembly });
+            var builder = new RouteBuilder(new[] { typeof(Ping).GetTypeInfo().Assembly });
 
             builder.Filter(t => t.FullName.Contains("RouteBuilderTests"));
             var routes = builder.GetRoutes();
@@ -48,7 +50,7 @@
         [Fact]
         public void ShouldSetPathsForRoutes()
         {
-            var builder = new RouteBuilder(new[] { typeof(RouteBuilderTests).Assembly });
+            var builder = new RouteBuilder(new[] { typeof(Ping).GetTypeInfo().Assembly });
             builder.Filter(t => t.FullName.Contains("RouteBuilderTests"));
 
             builder.Path(t => "/BuilderTest/" + t.Name);

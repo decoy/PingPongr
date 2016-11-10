@@ -1,22 +1,24 @@
 {
-  "compilationOptions": {
+  "buildOptions": {
     "emitEntryPoint": true
   },
 
   "dependencies": {
-    "Microsoft.Owin.SelfHost": "3.0.1",
-    "Microsoft.Owin.StaticFiles": "3.0.1",
+    "Microsoft.AspNetCore.Owin": "1.0.0",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+    "Microsoft.AspNetCore.StaticFiles": "1.0.0",
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.1"
+    },
     "PingPongr": { "target": "project" },
-    "SimpleInjector": "3.1.2",
-    "SimpleInjector.Extensions.ExecutionContextScoping": "3.1.2"
-  },
-
-  "commands": {
-    "PingPongr.Sandbox": "PingPongr.Sandbox"
+    "PingPongr.Serialization.JsonNet": { "target": "project" },
+    "SimpleInjector": "3.2.7"
   },
 
   "frameworks": {
-    "net45": { },
-    "dnx451": { }
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
+    }
   }
 }
