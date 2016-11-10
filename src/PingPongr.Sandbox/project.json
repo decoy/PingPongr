@@ -12,7 +12,7 @@
       "version": "1.0.1"
     },
     "PingPongr": { "target": "project" },
-    "PingPongr.Serialization.JsonNet": "1.0.0-*",
+    "PingPongr.Serialization.JsonNet": { "target": "project" },
     "SimpleInjector": "3.2.7"
   },
 
