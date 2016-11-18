@@ -1,6 +1,17 @@
 ﻿{
   "version": "0.4.0-*",
-
+  "description": "A default serializer for PingPongr using Json.NET.",
+  "authors": [
+    "Kellen Piffner"
+  ],
+  "packOptions": {
+    "repository": {
+      "type": "git",
+      "url": "git://github.com/decoy/PingPongr"
+    },
+    "projectUrl": "https://github.com/decoy/PingPongr",
+    "licenseUrl": "https://github.com/decoy/PingPongr/blob/master/LICENSE"
+  },
   "dependencies": {
     "Newtonsoft.Json": "9.0.1",
     "PingPongr": "0.4.0"
