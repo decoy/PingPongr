@@ -6,7 +6,16 @@ The framework itself is extremely lean, with minimal dependencies and most of th
 
 The core router concept is based off the infinitely useful [MediatR](https://github.com/jbogard/MediatR) by Jimmy Bogard.  See his blog post  ["Tackling cross-cutting concerns with a mediator pipeline"](https://lostechies.com/jimmybogard/2014/09/09/tackling-cross-cutting-concerns-with-a-mediator-pipeline/) for more information on using this pattern.
 
-## Example
+
+## Getting Started
+
+To get started with a default serializer, install the [PingPongr.Serialization.JsonNet](https://www.nuget.org/packages/PingPongr.Serialization.JsonNet) NuGet package.
+
+    Install-Package PingPongr.Serialization.JsonNet
+
+This command from Package Manager Console will download and install PingPongr and the default serializer implementation.  This can be switched out for your own implementation as necessary.
+
+### Example
 
 Your main API consists of the request, the response, and the core handler that processes the request.
 
