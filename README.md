@@ -91,7 +91,7 @@ A functional, self hosted example using SimpleInjector
                 //Using package Microsoft.AspNetCore.Owin
                 app.UseOwin(owin =>
                 {
-                    owin.UsePingPongr(container.GetInstance<Router>(), "/api");
+                    owin.UsePingPongr(router, "/api");
                 });
             }
         }
