@@ -1,7 +1,6 @@
 ﻿namespace PingPongr
 {
     using System;
-    using System.Collections.Generic;
 
     /// <summary>
     /// Factory method for creating a single instance of a type.

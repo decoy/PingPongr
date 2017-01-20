@@ -15,14 +15,6 @@
         private static readonly Task CompletedTask = Task.FromResult(false);
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="JsonNetSerializer"/> class.
-        /// </summary>
-        public JsonNetMediaHandler()
-        {
-            this.serializer = JsonSerializer.CreateDefault();
-        }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="JsonNetSerializer"/> class,
         /// with the provided <paramref name="serializer"/>.
         /// </summary>

@@ -93,7 +93,11 @@
             container.RegisterCollection(routes);
 
             //register the default media handler
-            container.Register<IMediaTypeHandler, JsonNetMediaHandler>();
+            //Note, there can be more than one, so this is a collection
+            container.RegisterCollection<IMediaTypeHandler>(new[]
+            {
+                typeof(JsonNetMediaHandler),
+            });
 
             //this is the router's path to grabbing new request handler instances
             container.RegisterSingleton(new InstanceFactory(container.GetInstance));

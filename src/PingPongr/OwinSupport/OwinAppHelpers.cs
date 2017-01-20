@@ -38,7 +38,6 @@
                 {
                     var context = new OwinContext(env, routePrefix);
                     await router.RouteRequest(context);
-                    context.StatusCode = context.IsHandled ? 200 : 404;
                 }
                 else
                 {
