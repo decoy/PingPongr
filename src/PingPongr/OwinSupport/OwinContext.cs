@@ -13,7 +13,17 @@
     {
         private IDictionary<string, object> environment;
 
-        public bool IsHandled { get; set; }
+        public bool IsHandled
+        {
+            get
+            {
+                return StatusCode == 200;
+            }
+            set
+            {
+                StatusCode = value ? 200 : 404;
+            }
+        }
 
         public string RoutePrefix { get; private set; }
         public string RequestPath { get; private set; }
@@ -36,7 +46,15 @@
 
         public string RequestMediaType
         {
-            get { return RequestHeaders["Content-Type"].FirstOrDefault(); }
+            get
+            {
+                if (RequestHeaders.ContainsKey("Content-Type"))
+                {
+                    return RequestHeaders["Content-Type"].FirstOrDefault();
+                }
+
+                return string.Empty;
+            }
         }
 
         public IEnumerable<string> ResponseMediaTypes

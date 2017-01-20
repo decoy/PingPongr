@@ -42,9 +42,10 @@
                 if (media == null)
                     throw new InvalidOperationException("No media handler registered for type " + context.RequestMediaType);
 
-                await route.Send(media, factory, context);
-
                 context.IsHandled = true;
+
+                await route.Send(media, factory, context);
+                                
             }
         }
     }
