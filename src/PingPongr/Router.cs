@@ -33,6 +33,8 @@
 
         public async Task RouteRequest(IRequestContext context)
         {
+            context.IsHandled = false;
+
             IRoute route;
             if (routes.TryGetValue(context.Path, out route)) //must match exactly
             {
@@ -45,7 +47,6 @@
                 context.IsHandled = true;
 
                 await route.Send(media, factory, context);
-                                
             }
         }
     }
