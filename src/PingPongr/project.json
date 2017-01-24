@@ -1,5 +1,5 @@
 {
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "PingPongr is a simple RPC style web service framework built around the Mediator pattern.  The framework itself is extremely lean, with minimal dependencies and most of the configuration burden pushed down to the IoC container and other Owin middlwares. This allows for more flexibility when infrastructure concerns change without having to change your own business logic.",
   "authors": [
     "Kellen Piffner"

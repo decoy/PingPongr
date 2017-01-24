@@ -23,9 +23,9 @@
         /// <returns>the awaitable task representing the routing operation</returns>
         public async Task Send(IMediaTypeHandler mediaHandler, InstanceFactory factory, IRequestContext context)
         {
-            var req = await mediaHandler.Read<TRequest>(context.RequestBody, context.CancellationToken);
+            var req = await mediaHandler.Read<TRequest>(context);
             var resp = await SendAsync(factory, req, context.CancellationToken);
-            await mediaHandler.Write(resp, context.ResponseBody, context, context.CancellationToken);
+            await mediaHandler.Write(resp, context);
         }
 
         private static Task<TResponse> SendAsync(InstanceFactory factory, IRouteRequest<TResponse> msg, CancellationToken cancellationToken)

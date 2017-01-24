@@ -69,16 +69,6 @@
         }
 
         [Fact]
-        public void ShouldSetResponseLength()
-        {
-            var env = GetOwinEnvironment();
-            var ctx = new OwinContext(env, null);
-
-            ctx.ContentLength = 50;
-            ctx.ContentLength.ShouldBe(50);
-        }
-
-        [Fact]
         public void ShouldSetResponseTypes()
         {
             var env = GetOwinEnvironment();
@@ -106,7 +96,6 @@
             var ctx = new OwinContext(env, null);
 
             ctx.CancellationToken.ShouldBe(CancellationToken.None);
-            ctx.ContentLength.ShouldBe(0);
             ctx.Method.ShouldBe("POST");
             ctx.Path.ShouldBe("/Ping");
             ctx.RequestPath.ShouldBe("/Ping");
