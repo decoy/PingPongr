@@ -5,6 +5,7 @@
     using System.IO;
     using System.Linq;
     using System.Threading;
+    using System.Globalization;
 
     /// <summary>
     /// Wrapper for the Owin context environment dictionary
@@ -72,27 +73,6 @@
             set
             {
                 ResponseHeaders[CONTENT_TYPE] = value.ToArray();
-            }
-        }
-
-        public int ContentLength
-        {
-            get
-            {
-                var len = GetHeaderValues(ResponseHeaders, CONTENT_LENGTH, "0").First();
-                int res = 0;
-                if (len != null && int.TryParse(len, out res))
-                {
-                    return res;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-            set
-            {
-                ResponseHeaders[CONTENT_LENGTH] = new[] { value.ToString() };
             }
         }
 

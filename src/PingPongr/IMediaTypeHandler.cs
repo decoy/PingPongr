@@ -1,8 +1,6 @@
 ﻿namespace PingPongr
 {
-    using System.IO;
     using System.Threading.Tasks;
-    using System.Threading;
 
     /// <summary>
     /// Defines a media handler for incoming and outgoing streams
@@ -21,19 +19,16 @@
         /// Reads from the input stream
         /// </summary>
         /// <typeparam name="T">The type to be deserialized from the stream</typeparam>
-        /// <param name="inputStream">the stream to be read from</param>
-        /// <param name="cancellationToken">the request cancellation token</param>
+        /// <param name="context">the request context with access to headers, response body and cancellation tokens</param>
         /// <returns>an awaitable task with the results of the deserialized stream</returns>
-        Task<T> Read<T>(Stream inputStream, CancellationToken cancellationToken);
+        Task<T> Read<T>(IRequestContext context);
 
         /// <summary>
         /// Writes an object to the output stream 
         /// </summary>
         /// <param name="content">the object to be written</param>
-        /// <param name="outputStream">the stream to write to</param>
-        /// <param name="context">the request context (to set response media types)</param>
-        /// <param name="cancellationToken">the request cancellation token</param>
+        /// <param name="context">the request context with access to headers, response body and cancellation tokens</param>
         /// <returns>An awaitable taks</returns>
-        Task Write(object content, Stream outputStream, IRequestContext context, CancellationToken cancellationToken);
+        Task Write(object content, IRequestContext context);
     }
 }

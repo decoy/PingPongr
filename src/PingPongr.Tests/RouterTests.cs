@@ -53,13 +53,13 @@
                 return true;
             }
 
-            public Task<T> Read<T>(Stream inputStream, CancellationToken cancellationToken)
+            public Task<T> Read<T>(IRequestContext context)
             {
                 HasRead = true;
                 return Task.FromResult(default(T));
             }
 
-            public Task Write(object content, Stream outputStream, IRequestContext context, CancellationToken cancellationToken)
+            public Task Write(object content, IRequestContext context)
             {
                 HasWritten = true;
                 return Task.FromResult(0);
@@ -81,8 +81,6 @@
             public IEnumerable<string> ResponseMediaTypes { get; set; }
 
             public CancellationToken CancellationToken { get; set; }
-
-            public int ContentLength { get; set; }
         }
 
         public class FakeRoute : IRoute
