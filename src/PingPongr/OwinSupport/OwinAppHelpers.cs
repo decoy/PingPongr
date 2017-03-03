@@ -9,6 +9,9 @@
 
     using PipeFunc = System.Action<System.Func<System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>, System.Func<System.Collections.Generic.IDictionary<string, object>, System.Threading.Tasks.Task>>>;
 
+    /// <summary>
+    /// Extension methods for working with the OWIN methods
+    /// </summary>
     public static class OwinAppHelpers
     {
         /// <summary>

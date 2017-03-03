@@ -31,6 +31,11 @@
             this.mediaHandlers = mediaHandlers;
         }
 
+        /// <summary>
+        /// Routes the request to the correct route
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task RouteRequest(IRequestContext context)
         {
             context.IsHandled = false;
@@ -42,7 +47,9 @@
                     .FirstOrDefault(m => m.CanHandleMediaType(context.RequestMediaType));
 
                 if (media == null)
+                {
                     throw new InvalidOperationException("No media handler registered for type " + context.RequestMediaType);
+                }
 
                 context.IsHandled = true;
 

@@ -5,7 +5,6 @@
     using System.IO;
     using System.Linq;
     using System.Threading;
-    using System.Globalization;
 
     /// <summary>
     /// Wrapper for the Owin context environment dictionary
@@ -17,6 +16,11 @@
 
         private IDictionary<string, object> environment;
 
+        /// <summary>
+        /// Wraps the Status Code.
+        /// Get returns true if 200, anything else is false.
+        /// If set to false, will set status code to 404.
+        /// </summary>
         public bool IsHandled
         {
             get
@@ -29,16 +33,44 @@
             }
         }
 
+        /// <summary>
+        /// Prefix for the incoming request
+        /// </summary>
         public string RoutePrefix { get; private set; }
+
+        /// <summary>
+        /// The full path of the incoming request
+        /// </summary>
         public string RequestPath { get; private set; }
+
+        /// <summary>
+        /// What HTTP method the incoming request is
+        /// </summary>
         public string Method { get; private set; }
 
+        /// <summary>
+        /// The <see cref="RequestPath"/> minus the <see cref="RoutePrefix"/>.
+        /// </summary>
         public string Path { get; private set; }
 
+        /// <summary>
+        /// All incoming http headers
+        /// </summary>
         public IDictionary<string, string[]> RequestHeaders { get; private set; }
+
+        /// <summary>
+        /// The request body stream
+        /// </summary>
         public Stream RequestBody { get; private set; }
 
+        /// <summary>
+        /// All outgoing response headers
+        /// </summary>
         public IDictionary<string, string[]> ResponseHeaders { get; private set; }
+
+        /// <summary>
+        /// THe response body stream
+        /// </summary>
         public Stream ResponseBody { get; private set; }
 
         /// <summary>
@@ -56,6 +88,9 @@
             }
         }
 
+        /// <summary>
+        /// The media type, pulled from the Request Headers, content type
+        /// </summary>
         public string RequestMediaType
         {
             get
@@ -64,6 +99,9 @@
             }
         }
 
+        /// <summary>
+        /// The response media headers.  Placed in the Content type header.
+        /// </summary>
         public IEnumerable<string> ResponseMediaTypes
         {
             get
@@ -76,11 +114,30 @@
             }
         }
 
+        /// <summary>
+        /// Cancellation token from the HTTP host.  
+        /// </summary>
         public CancellationToken CancellationToken { get; private set; }
 
-        public OwinContext(IDictionary<string, object> env, string routePrefix)
+        /// <summary>
+        /// Creates an Owin Context from the dictionary of environment data
+        /// </summary>
+        /// <param name="environment">The environment dictionary from the owin request</param>
+        public OwinContext(IDictionary<string, object> environment) : this(environment, null) { }
+
+        /// <summary>
+        /// Creates an Owin Context from the dictionary of environment data
+        /// </summary>
+        /// <param name="environment">The environment dictionary from the owin request</param>
+        /// <param name="routePrefix">The route prefix (if any)</param>
+        public OwinContext(IDictionary<string, object> environment, string routePrefix)
         {
-            environment = env;
+            if (environment == null)
+            {
+                throw new ArgumentNullException("env");
+            }
+
+            this.environment = environment;
             RoutePrefix = routePrefix;
 
             RequestPath = GetEnvironmentValue<string>(OwinKeys.RequestPath, null);
