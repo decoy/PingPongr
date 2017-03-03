@@ -13,7 +13,8 @@
     },
     "PingPongr": { "target": "project" },
     "PingPongr.Serialization.JsonNet": { "target": "project" },
-    "SimpleInjector": "3.3.2"  },
+    "SimpleInjector": "3.3.2",
+    "SimpleInjector.Integration.AspNetCore": "3.3.0"  },
 
   "frameworks": {
     "netcoreapp1.0": {

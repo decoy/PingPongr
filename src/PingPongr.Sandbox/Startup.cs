@@ -22,6 +22,7 @@
             RegisterErrorHandler(app); //must be registered first
             RegisterContextAccessor(container, app);
             RegisterFileHosting(app);
+            app.UseSimpleInjectorAspNetRequestScoping(container); //simple injector's per-request scoping for aspnet core
 
             //register PingPongr!
             //Note: PingPongr uses Owin registration for maximum compatibility

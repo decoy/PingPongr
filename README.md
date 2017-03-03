@@ -1,6 +1,6 @@
 # PingPongr [![Build status](https://ci.appveyor.com/api/projects/status/wl16eoibd2i97a8i/branch/master?svg=true)](https://ci.appveyor.com/project/decoy/pingpongr/branch/master) [![NuGet](https://img.shields.io/nuget/v/PingPongr.svg)](https://www.nuget.org/packages/PingPongr)
 
-An experimental, lightweight RPC framework.
+A lightweight web service framework.
 
 The framework itself is extremely lean, with minimal dependencies and most of the configuration burden pushed down to the IoC container and other Owin middlwares.  This allows for more flexibility when infrastructure concerns change without having to change your own business logic.
 
@@ -9,11 +9,12 @@ The core router concept is based off the infinitely useful [MediatR](https://git
 
 ## Getting Started
 
-To get started with a default serializer, install the [PingPongr.Serialization.JsonNet](https://www.nuget.org/packages/PingPongr.Serialization.JsonNet) NuGet package.
+To get started with a default serializer, install the PingPongr and [PingPongr.Serialization.JsonNet](https://www.nuget.org/packages/PingPongr.Serialization.JsonNet) NuGet packages.
 
+    Install-Package PingPongr
     Install-Package PingPongr.Serialization.JsonNet
 
-This command from Package Manager Console will download and install PingPongr and the default serializer implementation.  This can be switched out for your own implementation as necessary.
+This command from Package Manager Console will download and install PingPongr and the default serializer implementation.  The serializer can be switched out for your own implementation as necessary.
 
 ### Example
 
@@ -109,4 +110,8 @@ A functional, self hosted example using SimpleInjector
     }
 ```
 
-Checkout the PingPongr.Sandbox example project to see a more fully formed example including using decorators and injecting the OwinContext as a dependency to a handler.
+Check out the PingPongr.Sandbox example project to see a more fleshed out sample with logging, error handling, and a very simple web page sample.
+
+### Other Containers
+
+For configuring routes using other containers, the [MediatR](https://github.com/jbogard/MediatR) examples are a great reference.

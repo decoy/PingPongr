@@ -1,5 +1,5 @@
-﻿{
-  "version": "0.6.0",
+{
+  "version": "1.0.0",
   "description": "A default serializer for PingPongr using Json.NET.",
   "authors": [
     "Kellen Piffner"
@@ -14,11 +14,13 @@
   },
   "dependencies": {
     "Newtonsoft.Json": "9.0.1",
-    "PingPongr": "0.6.0"
+    "PingPongr": "1.0.0"
   },
-
   "frameworks": {
     "netstandard1.0": {
     }
+  },
+  "buildOptions": {
+    "xmlDoc": true
   }
 }
