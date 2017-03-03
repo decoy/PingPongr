@@ -12,6 +12,9 @@
     public class Route<TRequest, TResponse> : IRoute
         where TRequest : IRouteRequest<TResponse>
     {
+        /// <summary>
+        /// The path for this route.  Must match <see cref="IRequestContext.Path"/> exactly.
+        /// </summary>
         public string Path { get; set; }
 
         /// <summary>
