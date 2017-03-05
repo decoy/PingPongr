@@ -1,5 +1,7 @@
-﻿namespace PingPongr.OwinSupport
+﻿namespace PingPongr
 {
+    using OwinSupport;
+
     using AppFunc = System.Func<System.Collections.Generic.IDictionary<string, object>,
       System.Threading.Tasks.Task>;
 
@@ -29,7 +31,7 @@
         /// Generates a middleware function for PingPongr
         /// </summary>
         /// <param name="router">The PingPongr router</param>
-        /// <param name="routePrefix">An optional prefix filter.  Incoming urls must start with this prefix.</param>
+        /// <param name="routePrefix">An optional prefix filter.  Incoming urls must start with this prefix or the middleware will ignore them.</param>
         /// <returns>A standard owin middleware function</returns>
         public static MidFunc UsePingPongr(IRouter router, string routePrefix = null)
         {

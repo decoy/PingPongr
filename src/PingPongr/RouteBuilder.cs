@@ -43,8 +43,9 @@
             //defaults
             pathBuilder = t => "/" + t.FullName.Replace(".", "/");
 
-            this.types = assemblies.SelectMany(s => s.ExportedTypes)
-              .Where(IsRequest);
+            types = assemblies
+                .SelectMany(s => s.ExportedTypes)
+                .Where(IsRequest);
         }
 
         /// <summary>
@@ -61,9 +62,9 @@
 
         /// <summary>
         /// Allows for overriding the default path.
-        /// Default: t => "/" + t.FullName.Replace(".", "/");
+        /// Default: "/" + type.FullName.Replace(".", "/");
         /// </summary>
-        /// <param name="pathBuilder">the function to build paths from the type</param>
+        /// <param name="pathBuilder">the function to build path strings from the type</param>
         /// <returns>this</returns>
         public RouteBuilder Path(Func<Type, string> pathBuilder)
         {
@@ -88,7 +89,7 @@
         private static bool IsRequest(Type type)
         {
             var info = type.GetTypeInfo();
-            
+
             return !info.IsAbstract && !info.IsInterface && info.ImplementedInterfaces
                 .Any(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>));
         }

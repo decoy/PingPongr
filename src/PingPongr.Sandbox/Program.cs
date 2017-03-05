@@ -7,13 +7,19 @@
     {
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
-               .UseKestrel()
-               .UseStartup<Startup>()
-               .UseUrls("http://localhost:12345")
-               .Build();
+            using (var host = CreateHost())
+            {
+                host.Run();
+            }
+        }
 
-            host.Run();
+        private static IWebHost CreateHost()
+        {
+            return new WebHostBuilder()
+                .UseKestrel()
+                .UseStartup<Startup>()
+                .UseUrls("http://localhost:12345")
+                .Build();
         }
     }
 }

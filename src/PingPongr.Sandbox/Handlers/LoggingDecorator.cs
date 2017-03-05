@@ -21,10 +21,10 @@
         public async Task<TResponse> Handle(TRequest message, CancellationToken cancellationToken)
         {
             var sw = Stopwatch.StartNew();
-            var results = await this.inner.Handle(message, cancellationToken);
+            var results = await inner.Handle(message, cancellationToken);
             sw.Stop();
 
-            Console.WriteLine(String.Format("Processed {0} in {1}ms from path {2}", message.ToString(), sw.ElapsedMilliseconds, context.RequestPath));
+            Console.WriteLine(string.Format("Processed {0} in {1}ms from path {2}", message.ToString(), sw.ElapsedMilliseconds, context.RequestPath));
 
             return results;
         }

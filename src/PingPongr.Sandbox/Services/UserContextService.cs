@@ -2,6 +2,9 @@
 {
     using Microsoft.AspNetCore.Http;
 
+    /// <summary>
+    /// abstraction for the user context
+    /// </summary>
     public interface IUserContext
     {
         string Name { get; }

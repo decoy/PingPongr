@@ -3,13 +3,9 @@
     using Handlers;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
-    using Microsoft.Extensions.FileProviders;
-    using PingPongr.OwinSupport;
     using PingPongr.Serialization.JsonNet;
     using Services;
     using SimpleInjector;
-    using System;
-    using System.IO;
     using System.Reflection;
 
     public class Startup
@@ -19,69 +15,32 @@
             var container = BuildContainer();
 
             //register our optional example app middlewares.
-            RegisterErrorHandler(app); //must be registered first
-            RegisterContextAccessor(container, app);
-            RegisterFileHosting(app);
-            app.UseSimpleInjectorAspNetRequestScoping(container); //simple injector's per-request scoping for aspnet core
+            //When a request comes in, it goes through these in order.
+            app.RegisterErrorHandler();
+            app.RegisterFileHosting();
+
+            //this creates a simpleinjector scope per-request
+            //use in conjunction with Lifestyle.Scoped registrations in the container
+            app.UseSimpleInjectorAspNetRequestScoping(container);
+
+            app.RegisterContextAccessor(container);
 
             //register PingPongr!
             //Note: PingPongr uses Owin registration for maximum compatibility
             //Include package Microsoft.AspNetCore.Owin to use this with Kestrel
             app.UseOwin(owin =>
             {
-                owin.UsePingPongr(container.GetInstance<Router>(), "/api");
-            });
-        }
-
-        public static void RegisterFileHosting(IApplicationBuilder app)
-        {
-            //setup kestrel for static file hosting for our little demo file
-            app.UseDefaultFiles();
-            app.UseStaticFiles(new StaticFileOptions()
-            {
-                FileProvider = new PhysicalFileProvider(
-                    Path.Combine(Directory.GetCurrentDirectory(), "web")),
-                RequestPath = new PathString("/web"),
-            });
-        }
-
-        public static void RegisterErrorHandler(IApplicationBuilder app)
-        {
-            //Use whatever error handling middleware you want!
-            app.Use(next => async (ctx) =>
-            {
-                try
-                {
-                    await next(ctx);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("There was an error!: " + ex.Message);
-                    ctx.Response.StatusCode = 500;
-                }
-            });
-        }
-
-        public static void RegisterContextAccessor(Container container, IApplicationBuilder app)
-        {
-            //this allows some special magic for thread local access to the http context.
-            //normally MVC does this as part of its pipeline.
-            //this isn't required by PingPongr but is used by the example logging handler
-            IHttpContextAccessor accessor = container.GetInstance<IHttpContextAccessor>();
-            app.Use(next => ctx =>
-            {
-                accessor.HttpContext = ctx; //set the context appropriately
-                return next(ctx);
+                owin.UsePingPongr(container.GetInstance<IRouter>(), "/api");
             });
         }
 
         public static Container BuildContainer()
         {
-            //setup the container
             var container = new Container();
             var assemblies = new[] { typeof(Program).GetTypeInfo().Assembly };
 
-            //TODO more examples!
+            //register the routes and decorators with the container
+            //the syntax for this is different per container.  see your container's documentation for details
             container.Register(typeof(IRouteRequestHandler<,>), assemblies);
             container.RegisterDecorator(typeof(IRouteRequestHandler<,>), typeof(LoggingDecorator<,>));
 
@@ -91,21 +50,18 @@
                 .Filter(t => t.FullName.StartsWith("PingPongr.Sandbox.Api")) //limit to api namespace
                 .Path(t => "/" + t.Name.ToLower()) //override default path naming
                 .GetRoutes();
-            container.RegisterCollection(routes);
 
-            //register the default media handler
-            //Note, there can be more than one, so this is a collection
-            container.RegisterCollection<IMediaTypeHandler>(new[]
-            {
-                typeof(JsonNetMediaHandler),
-            });
+            //Using the PingPongr.Serialization.JsonNet media handler
+            var mediaHandlers = new[] { JsonNetMediaHandler.CreateDefault() };
 
             //this is the router's path to grabbing new request handler instances
-            container.RegisterSingleton(new InstanceFactory(container.GetInstance));
+            var factory = new InstanceFactory(container.GetInstance);
 
-            //the default router implementation
-            container.Register<IRouter, Router>();
+            //create the router and register it
+            var router = new Router(routes, mediaHandlers, factory);
+            container.RegisterSingleton<IRouter>(router);
 
+            //register some simple services to injecto into handlers
             //https://simpleinjector.org/blog/2016/07/working-around-the-asp-net-core-di-abstraction/
             container.RegisterSingleton<IHttpContextAccessor, HttpContextAccessor>();
             container.RegisterSingleton<IUserContext, AspNetUserContext>();

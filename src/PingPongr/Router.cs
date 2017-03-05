@@ -21,7 +21,7 @@
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="routes">The list of unique routes to be handled</param>
+        /// <param name="routes">The list of routes to be handled.  All paths must be unique.</param>
         /// <param name="mediaHandlers">Available media handlers</param>
         /// <param name="factory">Factory used to generate new request handlers</param>
         public Router(IEnumerable<IRoute> routes, IEnumerable<IMediaTypeHandler> mediaHandlers, InstanceFactory factory)
@@ -32,7 +32,7 @@
         }
 
         /// <summary>
-        /// Routes the request to the correct route
+        /// Routes the request to the correct request handler
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>

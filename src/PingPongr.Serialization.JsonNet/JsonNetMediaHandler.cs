@@ -30,6 +30,15 @@
         }
 
         /// <summary>
+        /// Creates a <see cref="JsonNetMediaHandler"/> using the <see cref="JsonSerializer.CreateDefault()"/> serializer
+        /// </summary>
+        /// <returns></returns>
+        public static JsonNetMediaHandler CreateDefault()
+        {
+            return new JsonNetMediaHandler(JsonSerializer.CreateDefault());
+        }
+
+        /// <summary>
         /// Handles application/json, text/json, +json content types.
         /// </summary>
         /// <param name="contentType"></param>
