@@ -1,11 +1,10 @@
 ﻿namespace PingPongr
 {
-    using System.Collections.Generic;
     using System.IO;
     using System.Threading;
 
     /// <summary>
-    /// Defines a route request
+    /// The context of a request.  Generally aligns with the HttpContext.
     /// </summary>
     public interface IRequestContext
     {
@@ -15,9 +14,14 @@
         string Path { get; }
 
         /// <summary>
-        /// True if this request was processed by a handler (matched a route)
+        /// True if this request was processed by a handler (matched a route).
         /// </summary>
         bool IsHandled { get; set; }
+
+        /// <summary>
+        /// The request body stream media type (json/xml/etc.)
+        /// </summary>
+        string RequestContentType { get; }
 
         /// <summary>
         /// The request body stream
@@ -25,9 +29,10 @@
         Stream RequestBody { get; }
 
         /// <summary>
-        /// The request body stream media type (json/xml/etc.)
+        /// The response media type.
+        /// Set by the media handlers
         /// </summary>
-        string RequestMediaType { get; }
+        string ResponseContentType { get; set; }
 
         /// <summary>
         /// The response body stream
@@ -40,10 +45,11 @@
         CancellationToken CancellationToken { get; }
 
         /// <summary>
-        /// List of the response body stream medias
-        /// Set by the media handlers
+        /// Gets a service of type T scoped for this request context.
+        /// Actual implementation should be part of the DI container.
         /// </summary>
-        IEnumerable<string> ResponseMediaTypes { get; set; }
-
+        /// <typeparam name="T">The service type</typeparam>
+        /// <returns>A service of type T</returns>
+        T GetService<T>();
     }
 }

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <RepositoryUrl>git://github.com/decoy/PingPongr</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/decoy/PingPongr</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/decoy/PingPongr/blob/master/LICENSE</PackageLicenseUrl>
+    <Description>A default serializer for PingPongr using Json.NET.</Description>
+    <Company>Kellen Piffner</Company>
+    <Authors>Kellen Piffner</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Copyright />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PingPongr\PingPongr.csproj" />
+  </ItemGroup>
+
+</Project>

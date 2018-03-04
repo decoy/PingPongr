@@ -1,7 +1,6 @@
 ﻿namespace PingPongr
 {
     using System.Threading.Tasks;
-    using System.Threading;
 
     /// <summary>
     /// The route wrapper implementation.
@@ -12,9 +11,6 @@
     public class Route<TRequest, TResponse> : IRoute
         where TRequest : IRouteRequest<TResponse>
     {
-        /// <summary>
-        /// The path for this route.  Must match <see cref="IRequestContext.Path"/> exactly.
-        /// </summary>
         public string Path { get; set; }
 
         /// <summary>
@@ -24,18 +20,15 @@
         /// <param name="factory">instance factory for generating the handlers</param>
         /// <param name="context">request context</param>
         /// <returns>the awaitable task representing the routing operation</returns>
-        public async Task Send(IMediaTypeHandler mediaHandler, InstanceFactory factory, IRequestContext context)
+        public async Task Send(IMediaTypeHandler mediaHandler, IRequestContext context)
         {
             var req = await mediaHandler.Read<TRequest>(context);
-            var resp = await SendAsync(factory, req, context.CancellationToken);
-            await mediaHandler.Write(resp, context);
-        }
 
-        private static Task<TResponse> SendAsync(InstanceFactory factory, IRouteRequest<TResponse> msg, CancellationToken cancellationToken)
-        {
-            return factory
-                .Resolve<IRouteRequestHandler<TRequest, TResponse>>()
-                .Handle((TRequest)msg, cancellationToken);
+            var resp = await context
+                .GetService<IRouteRequestHandler<TRequest, TResponse>>()
+                .Handle(req, context.CancellationToken);
+
+            await mediaHandler.Write(context, resp);
         }
     }
 }

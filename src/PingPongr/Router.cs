@@ -16,44 +16,33 @@
 
         private readonly IEnumerable<IMediaTypeHandler> mediaHandlers;
 
-        private readonly InstanceFactory factory;
-
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="routes">The list of routes to be handled.  All paths must be unique.</param>
+        /// <param name="routes">The list of unique routes to be handled</param>
         /// <param name="mediaHandlers">Available media handlers</param>
         /// <param name="factory">Factory used to generate new request handlers</param>
-        public Router(IEnumerable<IRoute> routes, IEnumerable<IMediaTypeHandler> mediaHandlers, InstanceFactory factory)
+        public Router(IEnumerable<IRoute> routes, IEnumerable<IMediaTypeHandler> mediaHandlers)
         {
             this.routes = routes.ToDictionary(r => r.Path);
-            this.factory = factory;
             this.mediaHandlers = mediaHandlers;
         }
 
-        /// <summary>
-        /// Routes the request to the correct request handler
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
         public async Task RouteRequest(IRequestContext context)
         {
             context.IsHandled = false;
 
-            IRoute route;
-            if (routes.TryGetValue(context.Path, out route)) //must match exactly
+            if (routes.TryGetValue(context.Path, out var route)) //must match exactly
             {
                 var media = mediaHandlers
-                    .FirstOrDefault(m => m.CanHandleMediaType(context.RequestMediaType));
+                    .FirstOrDefault(m => m.CanHandle(context.RequestContentType));
 
                 if (media == null)
-                {
-                    throw new InvalidOperationException("No media handler registered for type " + context.RequestMediaType);
-                }
+                    throw new InvalidOperationException("No media handler registered for type " + context.RequestContentType);
 
                 context.IsHandled = true;
 
-                await route.Send(media, factory, context);
+                await route.Send(media, context);
             }
         }
     }

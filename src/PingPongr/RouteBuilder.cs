@@ -10,8 +10,19 @@
     /// </summary>
     public class RouteBuilder
     {
-        private IEnumerable<Type> types { get; set; }
-        private Func<Type, string> pathBuilder { get; set; }
+        private IEnumerable<Type> types;
+
+        private Func<Type, string> pathBuilder;
+
+        /// <summary>
+        /// Creates a new builder from all currently loaded assemblies in the app domain
+        /// with the the default filters and path functions
+        /// </summary>
+        /// <returns></returns>
+        public static RouteBuilder WithLoadedAssemblies()
+        {
+            return new RouteBuilder(AppDomain.CurrentDomain.GetAssemblies());
+        }
 
         /// <summary>
         /// Creates a new builder from the specified assembles
@@ -62,9 +73,9 @@
 
         /// <summary>
         /// Allows for overriding the default path.
-        /// Default: "/" + type.FullName.Replace(".", "/");
+        /// Default: t => "/" + t.FullName.Replace(".", "/");
         /// </summary>
-        /// <param name="pathBuilder">the function to build path strings from the type</param>
+        /// <param name="pathBuilder">the function to build paths from the type</param>
         /// <returns>this</returns>
         public RouteBuilder Path(Func<Type, string> pathBuilder)
         {
@@ -108,6 +119,7 @@
         private static Type GetResponseType(Type requestType)
         {
             return requestType.GetTypeInfo().ImplementedInterfaces
+                // the implemented interface is generic, an the generic type def (not impl types) is IRouteRequest<>
                 .Single(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>))
                 .GetTypeInfo().GenericTypeArguments
                 .Single();

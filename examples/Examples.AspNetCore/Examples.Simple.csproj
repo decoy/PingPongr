@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\PingPongr.AspNetCore\PingPongr.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\PingPongr.JsonNet\PingPongr.JsonNet.csproj" />
+    <ProjectReference Include="..\..\src\PingPongr\PingPongr.csproj" />
+  </ItemGroup>
+
+</Project>

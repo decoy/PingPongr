@@ -1,11 +1,10 @@
 ﻿namespace PingPongr.Tests
 {
-    using Shouldly;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.Linq;
-    using Xunit;
     using System.Reflection;
 
-
+    [TestClass]
     public class RouteBuilderTests
     {
         public class Ping : IRouteRequest<Pong>
@@ -32,7 +31,7 @@
             public string Message { get; set; }
         }
 
-        [Fact]
+        [TestMethod]
         public void ShouldFilterRoutes()
         {
             var builder = new RouteBuilder(new[] { typeof(Ping).GetTypeInfo().Assembly });
@@ -40,14 +39,14 @@
             builder.Filter(t => t.FullName.Contains("RouteBuilderTests"));
             var routes = builder.GetRoutes();
 
-            routes.Count().ShouldBe(4);
-            routes.ShouldContain(r => r is Route<Ping, Pong>);
-            routes.ShouldContain(r => r is Route<Ping2, Pong>);
-            routes.ShouldContain(r => r is Route<PingConcrete, Pong>);
-            routes.ShouldContain(r => r is Route<Ping2Concrete, Pong>);
+            Assert.AreEqual(4, routes.Count());
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping, Pong>));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping2, Pong>));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<PingConcrete, Pong>));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping2Concrete, Pong>));
         }
 
-        [Fact]
+        [TestMethod]
         public void ShouldSetPathsForRoutes()
         {
             var builder = new RouteBuilder(new[] { typeof(Ping).GetTypeInfo().Assembly });
@@ -56,10 +55,12 @@
             builder.Path(t => "/BuilderTest/" + t.Name);
             var routes = builder.GetRoutes();
 
-            routes.ShouldContain(r => r.Path == "/BuilderTest/Ping");
-            routes.ShouldContain(r => r.Path == "/BuilderTest/Ping2");
-            routes.ShouldContain(r => r.Path == "/BuilderTest/PingConcrete");
-            routes.ShouldContain(r => r.Path == "/BuilderTest/Ping2Concrete");
+            Assert.AreEqual(4, routes.Count());
+
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/Ping"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/Ping2"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/PingConcrete"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/Ping2Concrete"));
         }
     }
 }
