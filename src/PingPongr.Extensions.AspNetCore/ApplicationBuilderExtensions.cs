@@ -2,7 +2,7 @@
 {
     using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
-    using PingPongr.AspNetCore;
+    using PingPongr.Extensions.AspNetCore;
 
     public static class ApplicationBuilderExtensions
     {

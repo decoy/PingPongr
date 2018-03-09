@@ -7,13 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr", "src\PingPongr\PingPongr.csproj", "{52CCF5D6-3276-4807-8B76-0035865E4DDF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr.JsonNet", "src\PingPongr.JsonNet\PingPongr.JsonNet.csproj", "{68E74539-3BE2-4267-8FA4-4BF18C440987}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr.AspNetCore", "src\PingPongr.AspNetCore\PingPongr.AspNetCore.csproj", "{B42E7AC6-D7B8-4C0A-9056-E46453EFA37D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr.Tests", "src\PingPongr.Tests\PingPongr.Tests.csproj", "{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.Simple", "examples\Examples.AspNetCore\Examples.Simple.csproj", "{936AFE1C-21F7-4838-9A2E-A71C6EEC5CDD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr.Extensions.AspNetCore", "src\PingPongr.Extensions.AspNetCore\PingPongr.Extensions.AspNetCore.csproj", "{311EAD07-116A-49DA-B59E-0E7CE4796AEA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr.Serialization.JsonNet", "src\PingPongr.Serialization.JsonNet\PingPongr.Serialization.JsonNet.csproj", "{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,14 +25,6 @@ Global
 		{52CCF5D6-3276-4807-8B76-0035865E4DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52CCF5D6-3276-4807-8B76-0035865E4DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52CCF5D6-3276-4807-8B76-0035865E4DDF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68E74539-3BE2-4267-8FA4-4BF18C440987}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68E74539-3BE2-4267-8FA4-4BF18C440987}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68E74539-3BE2-4267-8FA4-4BF18C440987}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68E74539-3BE2-4267-8FA4-4BF18C440987}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B42E7AC6-D7B8-4C0A-9056-E46453EFA37D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B42E7AC6-D7B8-4C0A-9056-E46453EFA37D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B42E7AC6-D7B8-4C0A-9056-E46453EFA37D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B42E7AC6-D7B8-4C0A-9056-E46453EFA37D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -41,6 +33,14 @@ Global
 		{936AFE1C-21F7-4838-9A2E-A71C6EEC5CDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{936AFE1C-21F7-4838-9A2E-A71C6EEC5CDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{936AFE1C-21F7-4838-9A2E-A71C6EEC5CDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{311EAD07-116A-49DA-B59E-0E7CE4796AEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{311EAD07-116A-49DA-B59E-0E7CE4796AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{311EAD07-116A-49DA-B59E-0E7CE4796AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{311EAD07-116A-49DA-B59E-0E7CE4796AEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

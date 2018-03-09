@@ -8,7 +8,7 @@
     [TestClass]
     public class RouterTests
     {
-        public class Ping : IRouteRequest<Pong>
+        public class Ping
         {
             public string Message { get; set; }
         }
@@ -18,7 +18,7 @@
             public string Message { get; set; }
         }
 
-        public class FakeHandler : IRouteRequestHandler<Ping, Pong>
+        public class FakeHandler : IRouteHandler<Ping, Pong>
         {
             public bool HasHandled { get; private set; }
             public Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
@@ -28,7 +28,7 @@
             }
         }
 
-        public class FakeCancelMeHandler : IRouteRequestHandler<Ping, Pong>
+        public class FakeCancelMeHandler : IRouteHandler<Ping, Pong>
         {
             public bool HasHandled { get; private set; }
             public Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
@@ -59,7 +59,7 @@
             var handler = new FakeHandler();
             var route = new Route<Ping, Pong>();
             var request = new FakeRequest();
-            request.Services.Add(typeof(IRouteRequestHandler<Ping, Pong>), handler);
+            request.Services.Add(typeof(IRouteHandler<Ping, Pong>), handler);
             var media = new FakeMedia();
 
             await route.Send(media, request);
@@ -107,7 +107,7 @@
             var handler = new FakeCancelMeHandler();
             var route = new Route<Ping, Pong>();
             var request = new FakeRequest();
-            request.Services.Add(typeof(IRouteRequestHandler<Ping, Pong>), handler);
+            request.Services.Add(typeof(IRouteHandler<Ping, Pong>), handler);
             var media = new FakeMedia();
             var cancel = new CancellationTokenSource();
             request.CancellationToken = cancel.Token;

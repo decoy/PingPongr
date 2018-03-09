@@ -2,7 +2,7 @@ namespace PingPongr.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Newtonsoft.Json;
-    using PingPongr.JsonNet;
+    using PingPongr.Serialization.JsonNet;
     using System;
     using System.IO;
     using System.Threading.Tasks;

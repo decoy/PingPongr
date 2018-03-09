@@ -12,7 +12,7 @@
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Registers <see cref="IRouteRequestHandler{TRequest, TResponse}"/> for all loaded assemblies as scoped.
+        /// Registers <see cref="IRouteHandler{TRequest, TResponse}"/> for all loaded assemblies as scoped.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -22,10 +22,10 @@
         }
 
         /// <summary>
-        /// Registers <see cref="IRouteRequestHandler{TRequest, TResponse}"/> for all the specified assemblies as scoped.
+        /// Registers <see cref="IRouteHandler{TRequest, TResponse}"/> for all the specified assemblies as scoped.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="assemblies">assemblies to be scanned for <see cref="IRouteRequestHandler{TRequest, TResponse}"/></param>
+        /// <param name="assemblies">assemblies to be scanned for <see cref="IRouteHandler{TRequest, TResponse}"/></param>
         /// <returns></returns>
         public static IServiceCollection AddRouteHandlers(this IServiceCollection services, IEnumerable<Assembly> assemblies)
         {
@@ -52,6 +52,18 @@
         /// Registers route handlers for all the specified type as scoped.
         /// Note:  If the type doesn't implement a handler, it won't be registered.
         /// </summary>
+        /// <typeparam name="T">The type of route handler to register</typeparam>
+        /// <param name="services"></param>
+        /// <returns></returns>
+        public static IServiceCollection AddRouteHandler<T>(this IServiceCollection services)
+        {
+            return AddRouteHandler(services, typeof(T));
+        }
+
+        /// <summary>
+        /// Registers route handlers for all the specified type as scoped.
+        /// Note:  If the type doesn't implement a handler, it won't be registered.
+        /// </summary>
         /// <param name="services"></param>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -69,7 +81,7 @@
             return type
                 .GetTypeInfo()
                 .ImplementedInterfaces
-                .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IRouteRequestHandler<,>));
+                .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IRouteHandler<,>));
         }
     }
 }

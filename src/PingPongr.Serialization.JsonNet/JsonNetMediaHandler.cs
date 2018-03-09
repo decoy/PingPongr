@@ -1,4 +1,4 @@
-﻿namespace PingPongr.JsonNet
+﻿namespace PingPongr.Serialization.JsonNet
 {
     using Newtonsoft.Json;
     using System;

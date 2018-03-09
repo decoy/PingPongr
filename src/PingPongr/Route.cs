@@ -9,7 +9,6 @@
     /// <typeparam name="TRequest"></typeparam>
     /// <typeparam name="TResponse"></typeparam>
     public class Route<TRequest, TResponse> : IRoute
-        where TRequest : IRouteRequest<TResponse>
     {
         public string Path { get; set; }
 
@@ -25,7 +24,7 @@
             var req = await mediaHandler.Read<TRequest>(context);
 
             var resp = await context
-                .GetService<IRouteRequestHandler<TRequest, TResponse>>()
+                .GetService<IRouteHandler<TRequest, TResponse>>()
                 .Handle(req, context.CancellationToken);
 
             await mediaHandler.Write(context, resp);

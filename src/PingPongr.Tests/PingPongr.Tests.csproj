@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\PingPongr.JsonNet\PingPongr.JsonNet.csproj" />
+    <ProjectReference Include="..\PingPongr.Serialization.JsonNet\PingPongr.Serialization.JsonNet.csproj" />
     <ProjectReference Include="..\PingPongr\PingPongr.csproj" />
   </ItemGroup>
 

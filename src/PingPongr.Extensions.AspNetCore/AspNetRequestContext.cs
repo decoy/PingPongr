@@ -1,4 +1,4 @@
-﻿namespace PingPongr.AspNetCore
+﻿namespace PingPongr.Extensions.AspNetCore
 {
     using Microsoft.AspNetCore.Http;
     using System.IO;
