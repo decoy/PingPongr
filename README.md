@@ -2,116 +2,90 @@
 
 A lightweight web service framework.
 
-The framework itself is extremely lean, with minimal dependencies and most of the configuration burden pushed down to the IoC container and other Owin middlwares.  This allows for more flexibility when infrastructure concerns change without having to change your own business logic.
+The framework itself is extremely lean, with minimal dependencies and most of the configuration burden pushed down to the IoC container and other middlwares.  This allows for more flexibility when infrastructure concerns change without having to change your own business logic.
 
-The core router concept is based off the infinitely useful [MediatR](https://github.com/jbogard/MediatR) by Jimmy Bogard.  See his blog post  ["Tackling cross-cutting concerns with a mediator pipeline"](https://lostechies.com/jimmybogard/2014/09/09/tackling-cross-cutting-concerns-with-a-mediator-pipeline/) for more information on using this pattern.
+The core router concept was originally based off the infinitely useful [MediatR](https://github.com/jbogard/MediatR) by Jimmy Bogard.  See his blog post  ["Tackling cross-cutting concerns with a mediator pipeline"](https://lostechies.com/jimmybogard/2014/09/09/tackling-cross-cutting-concerns-with-a-mediator-pipeline/) for more information on using this pattern.
 
 
 ## Getting Started
 
-To get started with a default serializer, install the PingPongr and [PingPongr.Serialization.JsonNet](https://www.nuget.org/packages/PingPongr.Serialization.JsonNet) NuGet packages.
+To get started with the common defaults, install these nuget packages.  This includes the "core" PingPongr abstractions, extensions for working with AspNetCore's hosting, and a default JSON serializer.
 
     Install-Package PingPongr
+    Install-Package PingPongr.Extensions.AspNetCore
     Install-Package PingPongr.Serialization.JsonNet
-
-This command from Package Manager Console will download and install PingPongr and the default serializer implementation.  The serializer can be switched out for your own implementation as necessary.
 
 ### Example
 
-Your main API consists of the request, the response, and the core handler that processes the request.
+The basic API consists of the request, the response, and the core handler that processes the request.
+
+Here's a fully functional and self hosted example.
 
 ```C#
+namespace Examples.Simple
+{
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.DependencyInjection;
     using PingPongr;
+    using PingPongr.Serialization.JsonNet;
     using System.Threading;
     using System.Threading.Tasks;
-    
-    //A request is unique per route
-    public class Ping : IRouteRequest<Pong>
+
+    // Request and Response objects are just simple objects that can be shared between routes.
+    public class Ping
     {
-        public string Hi { get; set; }
+        public string Message { get; set; }
     }
-    
-    //responses can be shared between routes
+
     public class Pong
     {
         public string Reply { get; set; }
     }
-    
-    public class PingHandler : IRouteRequestHandler<Ping, Pong>
+
+    // A handler processes a request and returns a response.
+    public class GetPongFromPing : IRouteHandler<Ping, Pong>
     {
-        public async Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
+        public Task<Pong> Handle(Ping request, CancellationToken cancellationToken)
         {
-            return await DoSomethingCoolAsync();
+            // Do something cool here. (This example is not cool.  Be cooler.  Be amazing.)
+            return Task.FromResult(new Pong() { Reply = "re: " + request.Message });
         }
     }
-```
 
-A functional, self hosted example using SimpleInjector
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            // add the route handlers to the service registrations.
+            services.AddRouteHandlers();
 
-```C#
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using PingPongr;
-    using PingPongr.OwinSupport;
-    using Serialization.JsonNet;
-    using SimpleInjector;
-    using System.Reflection;
+            // Using the PingPongr.JsonNet media handler.
+            services.AddSingleton<IMediaTypeHandler, JsonNetMediaHandler>();
+        }
+
+        public void Configure(IApplicationBuilder app)
+        {
+            // Add PingPongr to the app pipeline.
+            app.UsePingPongr();
+        }
+    }
 
     public class Program
     {
-        public class Startup
-        {
-            public void Configure(IApplicationBuilder app)
-            {
-                //setup the container
-                var container = new Container();
-                var assemblies = new[] { typeof(Program).GetTypeInfo().Assembly };
-
-                //register all the route request handlers
-                container.Register(typeof(IRouteRequestHandler<,>), assemblies);
-
-                container.Verify();
-
-                //an instance factory is how request handlers are built from the container.
-                var factory = new InstanceFactory(container.GetInstance);
-
-                //Using the PingPongr.Serialization.JsonNet media handler
-                var mediaHandlers = new[] { new JsonNetMediaHandler() };
-
-                //the routes are found using reflection via the RouteBuilder
-                var routes = RouteBuilder.WithAssemblies(assemblies).GetRoutes();
-
-                //setup the PingPongr router
-                IRouter router = new Router(
-                    routes,
-                    mediaHandlers,
-                    factory
-                    );
-
-                //register PingPongr using Owin
-                //Using package Microsoft.AspNetCore.Owin
-                app.UseOwin(owin =>
-                {
-                    owin.UsePingPongr(router, "/api");
-                });
-            }
-        }
-
         public static void Main(string[] args)
         {
-            var host = new WebHostBuilder()
+            BuildWebHost(args).Run();
+        }
+
+        public static IWebHost BuildWebHost(string[] args) => new WebHostBuilder()
                 .UseKestrel()
                 .UseStartup<Startup>()
-                .UseUrls("http://localhost:12345")
                 .Build();
-
-            host.Run();
-        }
     }
+}
 ```
 
-Check out the PingPongr.Sandbox example project to see a more fleshed out sample with logging, error handling, and a very simple web page sample.
+In this default example, sending `{ Message: 'Hello' }` to `http//:localhost:5000/Examples/Simple/GetPongFromPing`, would result in the response `{ Reply: 're: Hello'}`.
 
-### Other Containers
-
-For configuring routes using other containers, the [MediatR](https://github.com/jbogard/MediatR) examples are a great reference.
+**Check out the Examples.Complex project to see a more fleshed out sample with custom routes, logging decorators and service injection.**

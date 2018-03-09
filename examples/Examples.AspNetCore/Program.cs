@@ -38,8 +38,6 @@
 
             // Using the PingPongr.JsonNet media handler.
             services.AddSingleton<IMediaTypeHandler, JsonNetMediaHandler>();
-
-            //services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
 
         public void Configure(IApplicationBuilder app)
