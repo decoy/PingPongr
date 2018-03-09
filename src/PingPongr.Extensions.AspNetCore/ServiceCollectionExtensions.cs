@@ -41,7 +41,7 @@
         /// <returns></returns>
         public static IServiceCollection AddRouteHandlers(this IServiceCollection services, IEnumerable<Type> types)
         {
-            foreach (var t in types.Distinct())
+            foreach (var t in types.Where(t => !t.IsAbstract && !t.IsInterface && !t.IsGenericType))
             {
                 AddRouteHandler(services, t);
             }

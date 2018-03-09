@@ -7,12 +7,21 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.0" />
+    <PackageReference Include="Scrutor" Version="2.2.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\PingPongr.Extensions.AspNetCore\PingPongr.Extensions.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\PingPongr.Serialization.JsonNet\PingPongr.Serialization.JsonNet.csproj" />
     <ProjectReference Include="..\..\src\PingPongr\PingPongr.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="web\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
