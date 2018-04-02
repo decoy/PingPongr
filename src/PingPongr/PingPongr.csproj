@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Authors>Kellen Piffner</Authors>
+    <Company>Kellen Piffner</Company>
+    <Description>A minimal RPC framework for ASP.NET core.</Description>
+    <PackageLicenseUrl>https://github.com/decoy/PingPongr/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/decoy/PingPongr</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/decoy/PingPongr</RepositoryUrl>
+    <PackageTags>PingPongr aspnet rpc</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+</Project>

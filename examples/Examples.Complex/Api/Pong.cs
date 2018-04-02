@@ -1,4 +1,4 @@
-﻿namespace PingPongr.Sandbox.Api
+﻿namespace Examples.Complex.Api
 {
     public class Pong
     {

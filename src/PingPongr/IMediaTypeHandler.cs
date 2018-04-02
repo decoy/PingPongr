@@ -9,11 +9,11 @@
     {
         /// <summary>
         /// A function to see if this handler can process the specified media type.
-        /// "application/json"
+        /// ex: "application/json"
         /// </summary>
         /// <param name="mediaType"></param>
         /// <returns></returns>
-        bool CanHandleMediaType(string mediaType);
+        bool CanHandle(string contentType);
 
         /// <summary>
         /// Reads from the input stream
@@ -26,9 +26,9 @@
         /// <summary>
         /// Writes an object to the output stream 
         /// </summary>
-        /// <param name="content">the object to be written</param>
         /// <param name="context">the request context with access to headers, response body and cancellation tokens</param>
+        /// <param name="content">the object to be written</param>
         /// <returns>An awaitable taks</returns>
-        Task Write(object content, IRequestContext context);
+        Task Write<T>(IRequestContext context, T content);
     }
 }

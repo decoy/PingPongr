@@ -1,31 +1,28 @@
 ﻿namespace PingPongr.Serialization.JsonNet
 {
     using Newtonsoft.Json;
-    using System.IO;
-    using System.Threading;
-    using System.Threading.Tasks;
     using System;
+    using System.IO;
+    using System.Threading.Tasks;
 
     /// <summary>
-    /// A simple default media type handler.
-    /// Uses <see cref="SimpleJson"/> internally
+    /// Default implementation of a Json.Net media handler.
     /// </summary>
     public class JsonNetMediaHandler : IMediaTypeHandler
     {
-        private readonly JsonSerializer serializer;
-        private static readonly Task CompletedTask = Task.FromResult(false);
+        private JsonSerializer serializer;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="JsonNetSerializer"/> class,
-        /// with the provided <paramref name="serializer"/>.
-        /// </summary>
-        /// <param name="serializer">Json converters used when serializing.</param>
         public JsonNetMediaHandler(JsonSerializer serializer)
         {
             this.serializer = serializer;
         }
 
-        public bool CanHandleMediaType(string contentType)
+        public JsonNetMediaHandler()
+        {
+            serializer = JsonSerializer.CreateDefault();
+        }
+
+        public bool CanHandle(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
             {
@@ -40,28 +37,25 @@
                    || mimeType.EndsWith("+json", StringComparison.OrdinalIgnoreCase);
         }
 
-        private static async Task<string> GetStringFromStreamAsync(Stream stream)
+        public Task<T> Read<T>(IRequestContext context)
         {
-            using (StreamReader reader = new StreamReader(stream, System.Text.Encoding.UTF8, true, 1024, true))
+            using (StreamReader reader = new StreamReader(context.RequestBody, System.Text.Encoding.UTF8, true, 1024, true))
+            using (JsonTextReader jsonReader = new JsonTextReader(reader))
             {
-                return await reader.ReadToEndAsync();
+                return Task.FromResult(serializer.Deserialize<T>(jsonReader));
             }
         }
 
-        public async Task<T> Read<T>(IRequestContext context)
+        public Task Write<T>(IRequestContext context, T content)
         {
-            var json = await GetStringFromStreamAsync(context.RequestBody);
-            return JsonConvert.DeserializeObject<T>(json);
-        }
+            context.ResponseContentType = "application/json";
 
-        public Task Write(object content, IRequestContext context)
-        {
-            context.ResponseMediaTypes = new[] { "application/json" };
-
-            using (var writer = new JsonTextWriter(new StreamWriter(context.ResponseBody, System.Text.Encoding.UTF8, 1024, true)))
+            using (StreamWriter writer = new StreamWriter(context.ResponseBody, System.Text.Encoding.UTF8, 1024, true))
+            using (JsonTextWriter jsonWriter = new JsonTextWriter(writer))
             {
-                serializer.Serialize(writer, content);
-                return CompletedTask;
+                serializer.Serialize(jsonWriter, content);
+                jsonWriter.Flush();
+                return Task.CompletedTask;
             }
         }
     }

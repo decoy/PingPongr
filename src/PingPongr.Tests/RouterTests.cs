@@ -1,13 +1,11 @@
 ﻿namespace PingPongr.Tests
 {
-    using Shouldly;
-    using System.Collections.Generic;
-    using System.IO;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using Xunit;
-    using System;
 
+    [TestClass]
     public class RouterTests
     {
         public class Ping : IRouteRequest<Pong>
@@ -42,124 +40,87 @@
             }
         }
 
-        public class FakeMedia : IMediaTypeHandler
-        {
-            public bool HasRead { get; private set; }
-
-            public bool HasWritten { get; private set; }
-
-            public bool CanHandleMediaType(string mediaType)
-            {
-                return true;
-            }
-
-            public Task<T> Read<T>(IRequestContext context)
-            {
-                HasRead = true;
-                return Task.FromResult(default(T));
-            }
-
-            public Task Write(object content, IRequestContext context)
-            {
-                HasWritten = true;
-                return Task.FromResult(0);
-            }
-        }
-
-        public class FakeRequest : IRequestContext
-        {
-            public bool IsHandled { get; set; }
-
-            public string Path { get; set; }
-
-            public Stream RequestBody { get; set; }
-
-            public string RequestMediaType { get; set; }
-
-            public Stream ResponseBody { get; set; }
-
-            public IEnumerable<string> ResponseMediaTypes { get; set; }
-
-            public CancellationToken CancellationToken { get; set; }
-        }
-
         public class FakeRoute : IRoute
         {
             public bool HasSent { get; private set; }
+
             public string Path { get; set; }
 
-            public Task Send(IMediaTypeHandler mediaHandler, InstanceFactory factory, IRequestContext context)
+            public Task Send(IMediaTypeHandler mediaHandler, IRequestContext context)
             {
                 HasSent = true;
-                return Task.FromResult(0);
+                return Task.CompletedTask;
             }
         }
 
-        [Fact]
-        public async void ShouldRoute()
+        [TestMethod]
+        public async Task ShouldRoute()
         {
             var handler = new FakeHandler();
-            var route = new Route<Ping, Pong>();
+            var route = new Route<Ping, Pong>("/Ping");
             var request = new FakeRequest();
+            request.Services.Add(typeof(IRouteRequestHandler<Ping, Pong>), handler);
             var media = new FakeMedia();
 
-            await route.Send(media, t => handler, request);
+            await route.Send(media, request);
 
-            media.HasRead.ShouldBeTrue();
-            media.HasWritten.ShouldBeTrue();
-            handler.HasHandled.ShouldBeTrue();
+            Assert.IsTrue(media.HasRead);
+            Assert.IsTrue(media.HasWritten);
+            Assert.IsTrue(handler.HasHandled);
         }
 
-        [Fact]
-        public async void ShouldMatchRoute()
+        [TestMethod]
+        public async Task ShouldMatchRoute()
         {
             var handler = new FakeHandler();
             var route = new FakeRoute() { Path = "/Ping" };
             var request = new FakeRequest() { Path = "/Ping" };
             var media = new FakeMedia();
 
-            var router = new Router(new[] { route }, new[] { media }, t => handler);
+            var router = new Router(new[] { route }, new[] { media });
 
             await router.RouteRequest(request);
 
-            request.IsHandled.ShouldBeTrue();
-            route.HasSent.ShouldBeTrue();
+            Assert.IsTrue(request.IsHandled);
+            Assert.IsTrue(route.HasSent);
         }
 
-        [Fact]
-        public async void ShouldNotMatchWrongRoute()
+        [TestMethod]
+        public async Task ShouldNotMatchWrongRoute()
         {
             var handler = new FakeHandler();
             var route = new FakeRoute() { Path = "/Ping" };
             var request = new FakeRequest() { Path = "/NotPing" };
             var media = new FakeMedia();
 
-            var router = new Router(new[] { route }, new[] { media }, t => handler);
+            var router = new Router(new[] { route }, new[] { media });
 
             await router.RouteRequest(request);
 
-            request.IsHandled.ShouldBeFalse();
-            route.HasSent.ShouldBeFalse();
+            Assert.IsFalse(request.IsHandled);
+            Assert.IsFalse(route.HasSent);
         }
 
-        [Fact]
-        public void ShouldCancelRequest()
+        [TestMethod]
+        public async Task ShouldCancelRequest()
         {
             var handler = new FakeCancelMeHandler();
-            var route = new Route<Ping, Pong>();
+            var route = new Route<Ping, Pong>("/Ping");
             var request = new FakeRequest();
+            request.Services.Add(typeof(IRouteRequestHandler<Ping, Pong>), handler);
             var media = new FakeMedia();
             var cancel = new CancellationTokenSource();
             request.CancellationToken = cancel.Token;
 
             cancel.Cancel();
-            var routeTask = route.Send(media, t => handler, request);
-            //standard async pattern throws on cancellation
-            Should.ThrowAsync<OperationCanceledException>(routeTask);
+            var routeTask = route.Send(media, request);
 
-            routeTask.IsCanceled.ShouldBeTrue();
-            handler.HasHandled.ShouldBeFalse();
-            media.HasWritten.ShouldBeFalse();
+            //standard async pattern throws on cancellation
+            await Assert.ThrowsExceptionAsync<OperationCanceledException>(() => routeTask);
+
+            Assert.IsTrue(routeTask.IsCanceled);
+            Assert.IsFalse(handler.HasHandled);
+            Assert.IsFalse(media.HasWritten);
         }
     }
 }

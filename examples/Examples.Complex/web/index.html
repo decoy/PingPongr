@@ -7,7 +7,7 @@
 </head>
 <body>
     <div>
-        <input id="ping" placeholder="Ping!" /><button onclick="submit();">Send</button>
+        <input id="ping" placeholder="Enter your name!" /><button onclick="submit();">Send</button>
     </div>
     <pre id="results"></pre>
 
@@ -15,7 +15,7 @@
         function submit() {
             var msg = $("#ping").val();
 
-            send({ Hi: msg }, "/api/ping")
+            send({ Name: msg }, "/api/ping")
                 .done(function (data) {
                     //just set the results to the pre
                     $('#results').text(JSON.stringify(data));

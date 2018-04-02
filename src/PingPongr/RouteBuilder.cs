@@ -10,8 +10,31 @@
     /// </summary>
     public class RouteBuilder
     {
-        private IEnumerable<Type> types { get; set; }
-        private Func<Type, string> pathBuilder { get; set; }
+        private class RouteType
+        {
+            public Type RequestType { get; }
+            public Type ReponseType { get; }
+
+            public RouteType(Type requestType, Type responseType)
+            {
+                RequestType = requestType;
+                ReponseType = responseType;
+            }
+        }
+
+        private IEnumerable<RouteType> types;
+
+        private Func<RouteType, string> pathBuilder;
+
+        /// <summary>
+        /// Creates a new builder from all currently loaded assemblies in the app domain
+        /// with the the default filters and path functions
+        /// </summary>
+        /// <returns></returns>
+        public static RouteBuilder WithLoadedAssemblies()
+        {
+            return new RouteBuilder(AppDomain.CurrentDomain.GetAssemblies());
+        }
 
         /// <summary>
         /// Creates a new builder from the specified assembles
@@ -41,10 +64,9 @@
         public RouteBuilder(IEnumerable<Assembly> assemblies)
         {
             //defaults
-            pathBuilder = t => "/" + t.FullName.Replace(".", "/");
+            pathBuilder = t => "/" + t.RequestType.FullName.Replace(".", "/");
 
-            this.types = assemblies.SelectMany(s => s.ExportedTypes)
-              .Where(IsRequest);
+            types = GetRouteTypes(assemblies.SelectMany(s => s.ExportedTypes));
         }
 
         /// <summary>
@@ -53,21 +75,43 @@
         /// </summary>
         /// <param name="filter">the filter function (where clause)</param>
         /// <returns>this</returns>
-        public RouteBuilder Filter(Func<Type, bool> filter)
+        public RouteBuilder WithFilter(Func<Type, bool> filter)
         {
-            types = types.Where(filter);
+            types = types.Where(t => filter(t.RequestType));
             return this;
         }
 
         /// <summary>
-        /// Allows for overriding the default path.
-        /// Default: t => "/" + t.FullName.Replace(".", "/");
+        /// Filter out request types from the specified assemblies.
+        /// Only possible <see cref="IRouteRequest{TResponse}"/> types will be in the list.
         /// </summary>
-        /// <param name="pathBuilder">the function to build paths from the type</param>
+        /// <param name="filter">the filter function (where clause).  First type is the Request type, second is Response type</param>
         /// <returns>this</returns>
-        public RouteBuilder Path(Func<Type, string> pathBuilder)
+        public RouteBuilder WithFilter(Func<Type, Type, bool> filter)
         {
-            this.pathBuilder = pathBuilder;
+            types = types.Where(t => filter(t.RequestType, t.ReponseType));
+            return this;
+        }
+
+        /// <summary>
+        /// Overrides the default path building function. 
+        /// </summary>
+        /// <param name="pathBuilder">Takes in a request type and returns the string value for the path.</param>
+        /// <returns>this</returns>
+        public RouteBuilder WithPathBuilder(Func<Type, string> pathBuilder)
+        {
+            this.pathBuilder = t => pathBuilder(t.RequestType);
+            return this;
+        }
+
+        /// <summary>
+        /// Overrides the default path building function. 
+        /// </summary>
+        /// <param name="pathBuilder">Takes in a request type and response type and returns the string value for the path.</param>
+        /// <returns>this</returns>
+        public RouteBuilder WithPathBuilder(Func<Type, Type, string> pathBuilder)
+        {
+            this.pathBuilder = t => pathBuilder(t.RequestType, t.ReponseType);
             return this;
         }
 
@@ -77,41 +121,47 @@
         /// <returns>an enumerable of the routes</returns>
         public IEnumerable<IRoute> GetRoutes()
         {
-            return types.Select(t =>
-            {
-                var route = FromType(t);
-                route.Path = pathBuilder(t);
-                return route;
-            }).ToList(); //force the resolution now - fail faster.
+            return types
+                .Select(t => FromType(t, pathBuilder(t)))
+                .ToList(); //force the resolution now - fail faster.
         }
 
         private static bool IsRequest(Type type)
         {
             var info = type.GetTypeInfo();
-            
+
             return !info.IsAbstract && !info.IsInterface && info.ImplementedInterfaces
                 .Any(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>));
         }
 
-        private static IRoute FromType(Type requestType)
+        private static IRoute FromType(RouteType routeType, string path)
         {
             var type = typeof(Route<,>)
-                .MakeGenericType(requestType, GetResponseType(requestType));
+                .MakeGenericType(routeType.RequestType, routeType.ReponseType);
 
-            return (IRoute)Activator.CreateInstance(type);
+            return (IRoute)Activator.CreateInstance(type, path);
         }
 
-        /// <summary>
-        /// Gets the response type from a <see cref="IRouteRequest{TResponse}"/> type
-        /// </summary>
-        private static Type GetResponseType(Type requestType)
+        private static IEnumerable<RouteType> GetRouteTypes(IEnumerable<Type> types)
         {
-            return requestType.GetTypeInfo().ImplementedInterfaces
-                .Single(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>))
-                .GetTypeInfo().GenericTypeArguments
-                .Single();
+            // filter out requests that aren't implemented
+            foreach (var type in types.Where(t => !t.IsAbstract && !t.IsInterface && !t.IsGenericType))
+            {
+                // From the implementations, get the response types they implement
+                // Note:  It's possible for an individual request to have multiple response types.
+                // This requires the paths to be unique to actually work.
+                var handlers = type.GetInterfaces()
+                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRouteRequest<>));
+
+                // from the implemented handlers, get the important type infos
+                foreach (var h in handlers)
+                {
+                    // we know there is one here because we are only looking at items that implement the <> above
+                    var args = h.GenericTypeArguments;
+
+                    yield return new RouteType(type, args[0]);
+                }
+            }
         }
     }
-
-
 }

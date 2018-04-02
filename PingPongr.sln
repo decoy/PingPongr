@@ -1,22 +1,21 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D39D1253-9BDA-4A4B-8701-2B2AE12193D0}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{F35D7759-B001-4A14-A914-5B92066A0CA2}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PingPongr", "src\PingPongr\PingPongr.xproj", "{F96B9F2F-464D-4D48-8DEE-6585E5DB8199}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr", "src\PingPongr\PingPongr.csproj", "{52CCF5D6-3276-4807-8B76-0035865E4DDF}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F1CD2002-1249-451E-BB13-A1DC7127E274}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr.Tests", "src\PingPongr.Tests\PingPongr.Tests.csproj", "{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PingPongr.Tests", "src\PingPongr.Tests\PingPongr.Tests.xproj", "{95B3C5B9-31C2-4B7E-BA3A-0EE499E67F05}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr.Extensions.AspNetCore", "src\PingPongr.Extensions.AspNetCore\PingPongr.Extensions.AspNetCore.csproj", "{311EAD07-116A-49DA-B59E-0E7CE4796AEA}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PingPongr.Sandbox", "src\PingPongr.Sandbox\PingPongr.Sandbox.xproj", "{B493AE86-67BD-41B3-8BBE-F9E54481E449}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PingPongr.Serialization.JsonNet", "src\PingPongr.Serialization.JsonNet\PingPongr.Serialization.JsonNet.csproj", "{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "PingPongr.Serialization.JsonNet", "src\PingPongr.Serialization.JsonNet\PingPongr.Serialization.JsonNet.xproj", "{5D4404BA-94E5-4D21-9CDA-9D0A3BF9D7D1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.Complex", "examples\Examples.Complex\Examples.Complex.csproj", "{B0F1281C-F370-4587-9C88-32688FC723BE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.Simple", "examples\Examples.Simple\Examples.Simple.csproj", "{A0F3758E-88F5-4166-A7C6-241E31215D81}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,30 +23,39 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F96B9F2F-464D-4D48-8DEE-6585E5DB8199}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F96B9F2F-464D-4D48-8DEE-6585E5DB8199}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F96B9F2F-464D-4D48-8DEE-6585E5DB8199}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F96B9F2F-464D-4D48-8DEE-6585E5DB8199}.Release|Any CPU.Build.0 = Release|Any CPU
-		{95B3C5B9-31C2-4B7E-BA3A-0EE499E67F05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{95B3C5B9-31C2-4B7E-BA3A-0EE499E67F05}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{95B3C5B9-31C2-4B7E-BA3A-0EE499E67F05}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{95B3C5B9-31C2-4B7E-BA3A-0EE499E67F05}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B493AE86-67BD-41B3-8BBE-F9E54481E449}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B493AE86-67BD-41B3-8BBE-F9E54481E449}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B493AE86-67BD-41B3-8BBE-F9E54481E449}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B493AE86-67BD-41B3-8BBE-F9E54481E449}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5D4404BA-94E5-4D21-9CDA-9D0A3BF9D7D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5D4404BA-94E5-4D21-9CDA-9D0A3BF9D7D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5D4404BA-94E5-4D21-9CDA-9D0A3BF9D7D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5D4404BA-94E5-4D21-9CDA-9D0A3BF9D7D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52CCF5D6-3276-4807-8B76-0035865E4DDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52CCF5D6-3276-4807-8B76-0035865E4DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52CCF5D6-3276-4807-8B76-0035865E4DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52CCF5D6-3276-4807-8B76-0035865E4DDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69B41A54-339A-470E-A0C0-52D1CAB5AA9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{311EAD07-116A-49DA-B59E-0E7CE4796AEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{311EAD07-116A-49DA-B59E-0E7CE4796AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{311EAD07-116A-49DA-B59E-0E7CE4796AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{311EAD07-116A-49DA-B59E-0E7CE4796AEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22B02045-2C3F-4EF3-82C8-2D4C9B545FA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0F1281C-F370-4587-9C88-32688FC723BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0F1281C-F370-4587-9C88-32688FC723BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0F1281C-F370-4587-9C88-32688FC723BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0F1281C-F370-4587-9C88-32688FC723BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0F3758E-88F5-4166-A7C6-241E31215D81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0F3758E-88F5-4166-A7C6-241E31215D81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0F3758E-88F5-4166-A7C6-241E31215D81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0F3758E-88F5-4166-A7C6-241E31215D81}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{F96B9F2F-464D-4D48-8DEE-6585E5DB8199} = {F1CD2002-1249-451E-BB13-A1DC7127E274}
-		{95B3C5B9-31C2-4B7E-BA3A-0EE499E67F05} = {F1CD2002-1249-451E-BB13-A1DC7127E274}
-		{B493AE86-67BD-41B3-8BBE-F9E54481E449} = {F1CD2002-1249-451E-BB13-A1DC7127E274}
-		{5D4404BA-94E5-4D21-9CDA-9D0A3BF9D7D1} = {F1CD2002-1249-451E-BB13-A1DC7127E274}
+		{B0F1281C-F370-4587-9C88-32688FC723BE} = {F35D7759-B001-4A14-A914-5B92066A0CA2}
+		{A0F3758E-88F5-4166-A7C6-241E31215D81} = {F35D7759-B001-4A14-A914-5B92066A0CA2}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {537B586C-1872-4204-A6DC-EB3097D11794}
 	EndGlobalSection
 EndGlobal

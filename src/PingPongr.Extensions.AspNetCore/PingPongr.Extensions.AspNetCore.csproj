@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PackageLicenseUrl>https://github.com/decoy/PingPongr/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/decoy/PingPongr</PackageProjectUrl>
+    <RepositoryUrl>git://github.com/decoy/PingPongr</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Authors>Kellen Piffner</Authors>
+    <Company>Kellen Piffner</Company>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Extensions for configuring and registering PingPongr with ASP.NET.</Description>
+    <PackageTags>PingPongr</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PingPongr\PingPongr.csproj" />
+  </ItemGroup>
+
+</Project>

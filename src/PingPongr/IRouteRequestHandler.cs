@@ -9,14 +9,14 @@
     /// <typeparam name="TRequest"></typeparam>
     /// <typeparam name="TResponse"></typeparam>
     public interface IRouteRequestHandler<in TRequest, TResponse>
-        where TRequest : IRouteRequest<TResponse>
+         where TRequest : IRouteRequest<TResponse>
     {
         /// <summary>
         /// Asynchronously handles a request allowing for cancellation
         /// </summary>
-        /// <param name="message">The <see cref="IRouteRequest{TResponse}"/> to be handled</param>
+        /// <param name="request">The <see cref="{TRequest}"/> to be handled</param>
         /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns></returns>
-        Task<TResponse> Handle(TRequest message, CancellationToken cancellationToken);
+        /// <returns>A <see cref="{TResponse}"/></returns>
+        Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
     }
 }

@@ -1,7 +1,6 @@
 ﻿namespace PingPongr
 {
     using System.Threading.Tasks;
-    using System.Threading;
 
     /// <summary>
     /// Defines a route action for a particular path.
@@ -11,7 +10,7 @@
         /// <summary>
         /// the path this route handles
         /// </summary>
-        string Path { get; set; }
+        string Path { get; }
 
         /// <summary>
         /// The action to happen when routing
@@ -20,6 +19,6 @@
         /// <param name="factory">the isntance factory for generating the handlers</param>
         /// <param name="context">the request context</param>
         /// <returns>An awaitable task representing the send action.</returns>
-        Task Send(IMediaTypeHandler mediaHandler, InstanceFactory factory, IRequestContext context);
+        Task Send(IMediaTypeHandler mediaHandler, IRequestContext context);
     }
 }
