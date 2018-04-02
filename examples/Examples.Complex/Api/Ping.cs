@@ -1,8 +1,9 @@
 ﻿namespace Examples.Complex.Api
 {
-    public class Ping
+    using PingPongr;
+
+    public class Ping : IRouteRequest<Pong>
     {
         public string Name { get; set; }
     }
-
 }

@@ -15,7 +15,7 @@
         function submit() {
             var msg = $("#ping").val();
 
-            send({ Name: msg }, "/api/getgreeting")
+            send({ Name: msg }, "/api/ping")
                 .done(function (data) {
                     //just set the results to the pre
                     $('#results').text(JSON.stringify(data));

@@ -1,20 +1,20 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using PingPongr;
-using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Examples.Complex.Handlers
 {
-    public class LoggingDecorator<TRequest, TResponse> : IRouteHandler<TRequest, TResponse>
+    public class LoggingDecorator<TRequest, TResponse> : IRouteRequestHandler<TRequest, TResponse>
+        where TRequest : IRouteRequest<TResponse>
     {
-        IRouteHandler<TRequest, TResponse> inner;
-        IHttpContextAccessor context;
-        ILogger log;
+        private IRouteRequestHandler<TRequest, TResponse> inner;
+        private IHttpContextAccessor context;
+        private ILogger log;
 
-        public LoggingDecorator(IRouteHandler<TRequest, TResponse> inner, IHttpContextAccessor context, ILogger<LoggingDecorator<TRequest, TResponse>> log)
+        public LoggingDecorator(IRouteRequestHandler<TRequest, TResponse> inner, IHttpContextAccessor context, ILogger<LoggingDecorator<TRequest, TResponse>> log)
         {
             this.inner = inner;
             this.context = context;
@@ -28,7 +28,7 @@ namespace Examples.Complex.Handlers
             var results = await inner.Handle(message, cancellationToken);
             sw.Stop();
 
-            // the log the results!
+            // then log the results!
             log.LogInformation(
                 "Processed {message} in {elapsed}ms from path {path} for IP {ip}",
                 message.ToString(),

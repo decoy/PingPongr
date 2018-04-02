@@ -8,7 +8,8 @@
     /// </summary>
     /// <typeparam name="TRequest"></typeparam>
     /// <typeparam name="TResponse"></typeparam>
-    public interface IRouteHandler<in TRequest, TResponse>
+    public interface IRouteRequestHandler<in TRequest, TResponse>
+         where TRequest : IRouteRequest<TResponse>
     {
         /// <summary>
         /// Asynchronously handles a request allowing for cancellation

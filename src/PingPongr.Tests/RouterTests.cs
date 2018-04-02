@@ -8,7 +8,7 @@
     [TestClass]
     public class RouterTests
     {
-        public class Ping
+        public class Ping : IRouteRequest<Pong>
         {
             public string Message { get; set; }
         }
@@ -18,7 +18,7 @@
             public string Message { get; set; }
         }
 
-        public class FakeHandler : IRouteHandler<Ping, Pong>
+        public class FakeHandler : IRouteRequestHandler<Ping, Pong>
         {
             public bool HasHandled { get; private set; }
             public Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
@@ -28,7 +28,7 @@
             }
         }
 
-        public class FakeCancelMeHandler : IRouteHandler<Ping, Pong>
+        public class FakeCancelMeHandler : IRouteRequestHandler<Ping, Pong>
         {
             public bool HasHandled { get; private set; }
             public Task<Pong> Handle(Ping message, CancellationToken cancellationToken)
@@ -57,9 +57,9 @@
         public async Task ShouldRoute()
         {
             var handler = new FakeHandler();
-            var route = new Route<Ping, Pong>();
+            var route = new Route<Ping, Pong>("/Ping");
             var request = new FakeRequest();
-            request.Services.Add(typeof(IRouteHandler<Ping, Pong>), handler);
+            request.Services.Add(typeof(IRouteRequestHandler<Ping, Pong>), handler);
             var media = new FakeMedia();
 
             await route.Send(media, request);
@@ -105,9 +105,9 @@
         public async Task ShouldCancelRequest()
         {
             var handler = new FakeCancelMeHandler();
-            var route = new Route<Ping, Pong>();
+            var route = new Route<Ping, Pong>("/Ping");
             var request = new FakeRequest();
-            request.Services.Add(typeof(IRouteHandler<Ping, Pong>), handler);
+            request.Services.Add(typeof(IRouteRequestHandler<Ping, Pong>), handler);
             var media = new FakeMedia();
             var cancel = new CancellationTokenSource();
             request.CancellationToken = cancel.Token;

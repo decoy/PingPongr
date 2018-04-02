@@ -12,7 +12,7 @@
     public static class ServiceCollectionExtensions
     {
         /// <summary>
-        /// Registers <see cref="IRouteHandler{TRequest, TResponse}"/> for all loaded assemblies as scoped.
+        /// Registers <see cref="IRouteRequestHandler{TRequest, TResponse}"/> for all loaded assemblies as scoped.
         /// </summary>
         /// <param name="services"></param>
         /// <returns></returns>
@@ -22,10 +22,10 @@
         }
 
         /// <summary>
-        /// Registers <see cref="IRouteHandler{TRequest, TResponse}"/> for all the specified assemblies as scoped.
+        /// Registers <see cref="IRouteRequestHandler{TRequest, TResponse}"/> for all the specified assemblies as scoped.
         /// </summary>
         /// <param name="services"></param>
-        /// <param name="assemblies">assemblies to be scanned for <see cref="IRouteHandler{TRequest, TResponse}"/></param>
+        /// <param name="assemblies">assemblies to be scanned for <see cref="IRouteRequestHandler{TRequest, TResponse}"/></param>
         /// <returns></returns>
         public static IServiceCollection AddRouteHandlers(this IServiceCollection services, IEnumerable<Assembly> assemblies)
         {
@@ -81,7 +81,7 @@
             return type
                 .GetTypeInfo()
                 .ImplementedInterfaces
-                .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IRouteHandler<,>));
+                .Where(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IRouteRequestHandler<,>));
         }
     }
 }

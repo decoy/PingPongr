@@ -10,7 +10,7 @@
         /// <summary>
         /// the path this route handles
         /// </summary>
-        string Path { get; set; }
+        string Path { get; }
 
         /// <summary>
         /// The action to happen when routing

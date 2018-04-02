@@ -1,16 +1,14 @@
 ﻿namespace PingPongr.Tests
 {
-    using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
     using System.Linq;
     using System.Reflection;
-    using System.Threading;
-    using System.Threading.Tasks;
 
     [TestClass]
     public class RouteBuilderTests
     {
-        public class Ping
+        public class Ping : IRouteRequest<Pong>
         {
             public string Message { get; set; }
         }
@@ -20,98 +18,116 @@
             public string Reply { get; set; }
         }
 
-        // normal implementation
-        public class NormalHandler : IRouteHandler<Ping, Pong>
+        public class Foo : IRouteRequest<Bar>
         {
-            public Task<Pong> Handle(Ping request, CancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
+            public string Foogle { get; set; }
         }
 
-        // abstract implementation
-        public abstract class AbstractHandler : IRouteHandler<Ping, Pong>
+        public class Bar
         {
-            public Task<Pong> Handle(Ping request, CancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
+            public string Bargle { get; set; }
         }
 
-        // implements abstract
-        public class ImplementedAbstractHandler : AbstractHandler { }
-
-        // generic implementation
-        public class GenericHandler<TReq, TResp> : IRouteHandler<TReq, TResp>
+        public class AbstractRequest<TResponse> : IRouteRequest<TResponse>
         {
-            public Task<TResp> Handle(TReq request, CancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
+            public int Id { get; set; }
         }
 
-        // implements generic
-        public class ImplementedGenericHandler : GenericHandler<Ping, Pong> { }
-
-        // implements two
-        public class DualHandler : IRouteHandler<Ping, Pong>, IRouteHandler<Pong, Ping>
+        public class ImplementedAbstractRequest : AbstractRequest<Bar>
         {
-            public Task<Pong> Handle(Ping request, CancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
-
-            public Task<Ping> Handle(Pong request, CancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
+            public string Message { get; set; }
         }
 
-        // implements abstract and another because why not
-        public class ComplicatedHandler : AbstractHandler, IRouteHandler<Pong, Ping>
+        public interface IGenericRequest<TData, TResponse> : IRouteRequest<TResponse>
         {
-            public Task<Ping> Handle(Pong request, CancellationToken cancellationToken)
-            {
-                throw new NotImplementedException();
-            }
+            TData Data { get; set; }
+        }
+
+        public class ImplementedGenericRequest : IGenericRequest<Guid, Pong>
+        {
+            public Guid Data { get; set; }
+        }
+
+        public class MultipleResponseRequest : IRouteRequest<Pong>, IRouteRequest<Bar>
+        {
+            public string Message { get; set; }
         }
 
         [TestMethod]
-        public void ShouldFilterRoutes()
+        public void ShouldFilterRoutesByRequest()
         {
             var builder = new RouteBuilder(new[] { typeof(Ping).GetTypeInfo().Assembly });
 
-            builder.Filter(t => t.FullName.Contains("RouteBuilderTests"));
+            builder.WithFilter(t => t.FullName.Contains("RouteBuilderTests"));
             var routes = builder.GetRoutes();
 
-            Assert.AreEqual(7, routes.Count());
-            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping, Pong> && r.Path.EndsWith("NormalHandler")));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping, Pong> && r.Path.EndsWith("ImplementedAbstractHandler")));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping, Pong> && r.Path.EndsWith("ImplementedGenericHandler")));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping, Pong> && r.Path.EndsWith("DualHandler")));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Pong, Ping> && r.Path.EndsWith("DualHandler")));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping, Pong> && r.Path.EndsWith("ComplicatedHandler")));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Pong, Ping> && r.Path.EndsWith("ComplicatedHandler")));
+            Assert.AreEqual(6, routes.Count());
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Ping, Pong> && r.Path.EndsWith("Ping")));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Foo, Bar> && r.Path.EndsWith("Foo")));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<ImplementedAbstractRequest, Bar> && r.Path.EndsWith("ImplementedAbstractRequest")));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<ImplementedGenericRequest, Pong> && r.Path.EndsWith("ImplementedGenericRequest")));
+
+            // the multiples will have the same path using the default path builder
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<MultipleResponseRequest, Pong> && r.Path.EndsWith("MultipleResponseRequest")));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<MultipleResponseRequest, Bar> && r.Path.EndsWith("MultipleResponseRequest")));
         }
 
         [TestMethod]
-        public void ShouldSetPathsForRoutes()
+        public void ShouldFilterRoutesByResponses()
         {
             var builder = new RouteBuilder(new[] { typeof(Ping).GetTypeInfo().Assembly });
-            builder.Filter(t => t.FullName.Contains("RouteBuilderTests"));
 
-            builder.SetPathBuilder((timpl, treq, tresp) => "/BuilderTest/" + timpl.Name + "/" + treq.Name);
+            builder.WithFilter((treq, tresp) => tresp == typeof(Bar));
+
             var routes = builder.GetRoutes();
 
-            Assert.AreEqual(7, routes.Count());
+            Assert.AreEqual(3, routes.Count());
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<Foo, Bar> && r.Path.EndsWith("Foo")));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<ImplementedAbstractRequest, Bar> && r.Path.EndsWith("ImplementedAbstractRequest")));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r is Route<MultipleResponseRequest, Bar> && r.Path.EndsWith("MultipleResponseRequest")));
 
-            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/NormalHandler/Ping"));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/ImplementedAbstractHandler/Ping"));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/ImplementedGenericHandler/Ping"));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/DualHandler/Ping"));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/DualHandler/Pong"));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/ComplicatedHandler/Ping"));
-            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/ComplicatedHandler/Pong"));
+        }
+
+        [TestMethod]
+        public void ShouldSetPathsForRoutesByRequest()
+        {
+            var builder = new RouteBuilder(new[] { typeof(Ping).GetTypeInfo().Assembly });
+            builder.WithFilter(t => t.FullName.Contains("RouteBuilderTests"));
+
+            builder.WithPathBuilder(t => "/BuilderTest/" + t.Name);
+
+            var routes = builder.GetRoutes();
+
+            Assert.AreEqual(6, routes.Count());
+
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/Ping"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/Foo"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/ImplementedAbstractRequest"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/ImplementedGenericRequest"));
+
+            // by default, the multiple request will have the same default path
+            // this would throw an error in the router
+            Assert.AreEqual(2, routes.Count(r => r.Path == "/BuilderTest/MultipleResponseRequest"));
+        }
+
+        [TestMethod]
+        public void ShouldSetPathsForRoutesByRequestAndResponse()
+        {
+            var builder = new RouteBuilder(new[] { typeof(Ping).GetTypeInfo().Assembly });
+            builder.WithFilter(t => t.FullName.Contains("RouteBuilderTests"));
+
+            builder.WithPathBuilder((treq, tresp) => "/BuilderTest/" + treq.Name + "/" + tresp.Name);
+
+            var routes = builder.GetRoutes();
+
+            Assert.AreEqual(6, routes.Count());
+
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/Ping/Pong"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/Foo/Bar"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/ImplementedAbstractRequest/Bar"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/ImplementedGenericRequest/Pong"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/MultipleResponseRequest/Pong"));
+            Assert.IsNotNull(routes.SingleOrDefault(r => r.Path == "/BuilderTest/MultipleResponseRequest/Bar"));
         }
     }
 }

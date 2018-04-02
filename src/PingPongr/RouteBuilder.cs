@@ -10,35 +10,21 @@
     /// </summary>
     public class RouteBuilder
     {
-        /// <summary>
-        /// Wraps the builder types
-        /// </summary>
-        private class RouteTypes
+        private class RouteType
         {
-            /// <summary>
-            /// The implementation handler class
-            /// </summary>
-            public Type Implementation { get; set; }
+            public Type RequestType { get; }
+            public Type ReponseType { get; }
 
-            /// <summary>
-            /// The <see cref="IRouteHandler{TRequest, TResponse}"/> type
-            /// </summary>
-            public Type RequestHandler { get; set; }
-
-            /// <summary>
-            /// The TRequest type
-            /// </summary>
-            public Type Request { get; set; }
-
-            /// <summary>
-            /// The TResponse type
-            /// </summary>
-            public Type Response { get; set; }
+            public RouteType(Type requestType, Type responseType)
+            {
+                RequestType = requestType;
+                ReponseType = responseType;
+            }
         }
 
-        private IEnumerable<RouteTypes> types;
+        private IEnumerable<RouteType> types;
 
-        private Func<RouteTypes, string> pathBuilder;
+        private Func<RouteType, string> pathBuilder;
 
         /// <summary>
         /// Creates a new builder from all currently loaded assemblies in the app domain
@@ -77,44 +63,55 @@
         /// <param name="assemblies"></param>
         public RouteBuilder(IEnumerable<Assembly> assemblies)
         {
-            //default path builder
-            pathBuilder = t => "/" + t.Implementation.FullName.Replace(".", "/");
+            //defaults
+            pathBuilder = t => "/" + t.RequestType.FullName.Replace(".", "/");
 
             types = GetRouteTypes(assemblies.SelectMany(s => s.ExportedTypes));
         }
 
         /// <summary>
         /// Filter out types from the specified assemblies.
-        /// Only concrete <see cref="IRouteHandler{TRequest, TResponse}"/> types will be in the list.
+        /// only possible <see cref="IRouteRequest{TResponse}"/> types will be in the list.
         /// </summary>
         /// <param name="filter">the filter function (where clause)</param>
         /// <returns>this</returns>
-        public RouteBuilder Filter(Func<Type, bool> filter)
+        public RouteBuilder WithFilter(Func<Type, bool> filter)
         {
-            types = types.Where(t => filter(t.Implementation));
+            types = types.Where(t => filter(t.RequestType));
             return this;
         }
 
         /// <summary>
-        /// Allows for overriding the default route path.
-        /// Default: t => "/" + t.FullName.Replace(".", "/");
+        /// Filter out request types from the specified assemblies.
+        /// Only possible <see cref="IRouteRequest{TResponse}"/> types will be in the list.
         /// </summary>
-        /// <param name="pathBuilder">the function to build paths from the type</param>
+        /// <param name="filter">the filter function (where clause).  First type is the Request type, second is Response type</param>
         /// <returns>this</returns>
-        public RouteBuilder SetPathBuilder(Func<Type, string> pathBuilder)
+        public RouteBuilder WithFilter(Func<Type, Type, bool> filter)
         {
-            this.pathBuilder = t => pathBuilder(t.Implementation);
+            types = types.Where(t => filter(t.RequestType, t.ReponseType));
             return this;
         }
 
         /// <summary>
-        /// Allows for overriding the default route path.
+        /// Overrides the default path building function. 
         /// </summary>
-        /// <param name="pathBuilder">function accepting Implementation Type, Request Type, Response Type and returning a string</param>
-        /// <returns></returns>
-        public RouteBuilder SetPathBuilder(Func<Type, Type, Type, string> pathBuilder)
+        /// <param name="pathBuilder">Takes in a request type and returns the string value for the path.</param>
+        /// <returns>this</returns>
+        public RouteBuilder WithPathBuilder(Func<Type, string> pathBuilder)
         {
-            this.pathBuilder = t => pathBuilder(t.Implementation, t.Request, t.Response);
+            this.pathBuilder = t => pathBuilder(t.RequestType);
+            return this;
+        }
+
+        /// <summary>
+        /// Overrides the default path building function. 
+        /// </summary>
+        /// <param name="pathBuilder">Takes in a request type and response type and returns the string value for the path.</param>
+        /// <returns>this</returns>
+        public RouteBuilder WithPathBuilder(Func<Type, Type, string> pathBuilder)
+        {
+            this.pathBuilder = t => pathBuilder(t.RequestType, t.ReponseType);
             return this;
         }
 
@@ -124,50 +121,47 @@
         /// <returns>an enumerable of the routes</returns>
         public IEnumerable<IRoute> GetRoutes()
         {
-            return types.Select(t =>
-            {
-                var route = FromRouteTypes(t);
-                route.Path = pathBuilder(t);
-                return route;
-            }).ToList(); //force the resolution now - fail faster.
+            return types
+                .Select(t => FromType(t, pathBuilder(t)))
+                .ToList(); //force the resolution now - fail faster.
         }
 
-        private static IRoute FromRouteTypes(RouteTypes route)
+        private static bool IsRequest(Type type)
+        {
+            var info = type.GetTypeInfo();
+
+            return !info.IsAbstract && !info.IsInterface && info.ImplementedInterfaces
+                .Any(t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IRouteRequest<>));
+        }
+
+        private static IRoute FromType(RouteType routeType, string path)
         {
             var type = typeof(Route<,>)
-                .MakeGenericType(route.Request, route.Response);
+                .MakeGenericType(routeType.RequestType, routeType.ReponseType);
 
-            // not the best way to create a class, but 'good enough' for building them on first load
-            return (IRoute)Activator.CreateInstance(type);
+            return (IRoute)Activator.CreateInstance(type, path);
         }
 
-        private static IEnumerable<RouteTypes> GetRouteTypes(IEnumerable<Type> types)
+        private static IEnumerable<RouteType> GetRouteTypes(IEnumerable<Type> types)
         {
-            // filter out handlers that aren't implemented
+            // filter out requests that aren't implemented
             foreach (var type in types.Where(t => !t.IsAbstract && !t.IsInterface && !t.IsGenericType))
             {
-                // from the implementations, get the generic route request handlers they implement.
-                // an individual handler can implement multiple routes if it wants (will break default paths, though)
+                // From the implementations, get the response types they implement
+                // Note:  It's possible for an individual request to have multiple response types.
+                // This requires the paths to be unique to actually work.
                 var handlers = type.GetInterfaces()
-                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRouteHandler<,>));
+                    .Where(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IRouteRequest<>));
 
                 // from the implemented handlers, get the important type infos
                 foreach (var h in handlers)
                 {
-                    // we know there are two because they're items that implement the <,> above
+                    // we know there is one here because we are only looking at items that implement the <> above
                     var args = h.GenericTypeArguments;
 
-                    yield return new RouteTypes()
-                    {
-                        Implementation = type,
-                        Request = args[0],
-                        Response = args[1],
-                        RequestHandler = h
-                    };
+                    yield return new RouteType(type, args[0]);
                 }
             }
         }
     }
-
-
 }

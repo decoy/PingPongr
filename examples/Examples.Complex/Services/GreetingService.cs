@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace Examples.Complex.Services
 {
@@ -45,11 +46,13 @@ namespace Examples.Complex.Services
             log.LogInformation("Greeting service initialized!");
         }
 
-        public string GetRandomGreeting()
+        public Task<string> GetRandomGreeting()
         {
             var i = random.Next(0, Greetings.Length);
             log.LogInformation("Getting greeting {index}", i);
-            return Greetings[i];
+
+            // we're making this service look async to make the example more 'real world'
+            return Task.FromResult(Greetings[i]);
         }
     }
 }
