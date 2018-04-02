@@ -32,19 +32,21 @@ namespace Examples.Simple
     using System.Threading;
     using System.Threading.Tasks;
 
-    // Request and Response objects are just simple objects that can be shared between routes.
-    public class Ping
+    // A request is unqiue per route.
+    // It defines what response type is expected.
+    public class Ping : IRouteRequest<Pong>
     {
         public string Message { get; set; }
     }
 
+    // Response types can be shared between requests.
     public class Pong
     {
         public string Reply { get; set; }
     }
 
     // A handler processes a request and returns a response.
-    public class GetPongFromPing : IRouteHandler<Ping, Pong>
+    public class PingHandler : IRouteRequestHandler<Ping, Pong>
     {
         public Task<Pong> Handle(Ping request, CancellationToken cancellationToken)
         {
@@ -68,6 +70,8 @@ namespace Examples.Simple
         {
             // Add PingPongr to the app pipeline.
             app.UsePingPongr();
+
+            // By default, the endpoint will be available at:  Examples/Simple/Ping
         }
     }
 
@@ -86,6 +90,6 @@ namespace Examples.Simple
 }
 ```
 
-In this default example, sending `{ Message: 'Hello' }` to `http//:localhost:5000/Examples/Simple/GetPongFromPing`, would result in the response `{ Reply: 're: Hello'}`.
+In this default example, sending `{ Message: 'Hello' }` to `http//:localhost:5000/Examples/Simple/Ping`, would result in the response `{ Reply: 're: Hello'}`.
 
 **Check out the Examples.Complex project to see a more fleshed out sample with custom routes, logging decorators and service injection.**
