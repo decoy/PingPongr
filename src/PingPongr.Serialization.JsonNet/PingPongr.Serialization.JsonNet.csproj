@@ -11,6 +11,7 @@
     <Authors>Kellen Piffner</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Copyright />
+    <PackageTags>PingPongr</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>

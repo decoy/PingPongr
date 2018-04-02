@@ -9,6 +9,8 @@
     <Authors>Kellen Piffner</Authors>
     <Company>Kellen Piffner</Company>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Extensions for configuring and registering PingPongr with ASP.NET.</Description>
+    <PackageTags>PingPongr</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
