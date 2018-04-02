@@ -1,14 +1,18 @@
-version: '{build}'
+version: ci-{build}
 image: Visual Studio 2017
 configuration: Release
 nuget:
   disable_publish_on_pr: true
-before_build:
-  - cmd: dotnet restore
-build:
-  verbosity: minimal
+build_script:
+- pwsh: >-
+    if ($env:APPVEYOR_REPO_TAG -eq "true") {
+      dotnet build -c Release
+    }
+    else {
+      dotnet build -c Release --version-suffix $env:APPVEYOR_BUILD_VERSION
+    }
 test_script:
-- cmd: dotnet test src/PingPongr.Tests
+- cmd: dotnet test src/PingPongr.Tests --no-build
 artifacts:
 - path: '**\*.nupkg'
 deploy:
