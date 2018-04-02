@@ -10,7 +10,7 @@
     <RepositoryUrl>https://github.com/decoy/PingPongr</RepositoryUrl>
     <PackageTags>PingPongr aspnet rpc</PackageTags>
     <RepositoryType>git</RepositoryType>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
 </Project>

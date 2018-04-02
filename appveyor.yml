@@ -5,12 +5,12 @@ nuget:
   disable_publish_on_pr: true
 build_script:
 - pwsh: >-
-    if ($env:APPVEYOR_REPO_TAG -eq "true") {
-      dotnet build -c Release
-    }
-    else {
-      dotnet build -c Release --version-suffix $env:APPVEYOR_BUILD_VERSION
-    }
+    $version = $env:APPVEYOR_BUILD_VERSION
+    $versionSuffix = If ($env:APPVEYOR_REPO_TAG -eq "true") {""} Else {"--version-suffix=$($version)"}
+    dotnet build -c Release $versionSuffix
+    dotnet pack src/PingPongr -c Release --no-build --include-symbols $versionSuffix
+    dotnet pack src/PingPongr.Extensions.AspNetCore -c Release --no-build --include-symbols $versionSuffix
+    dotnet pack src/PingPongr.Serialization.JsonNet -c Release --no-build --include-symbols $versionSuffix
 test_script:
 - cmd: dotnet test src/PingPongr.Tests --no-build
 artifacts:

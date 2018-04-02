@@ -9,7 +9,7 @@
     <Description>A default serializer for PingPongr using Json.NET.</Description>
     <Company>Kellen Piffner</Company>
     <Authors>Kellen Piffner</Authors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Copyright />
     <PackageTags>PingPongr</PackageTags>
   </PropertyGroup>
