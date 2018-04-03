@@ -14,9 +14,9 @@
         /// <summary>
         /// Asynchronously handles a request allowing for cancellation
         /// </summary>
-        /// <param name="request">The <see cref="{TRequest}"/> to be handled</param>
+        /// <param name="request">The request to be handled</param>
         /// <param name="cancellationToken">the cancellation token</param>
-        /// <returns>A <see cref="{TResponse}"/></returns>
+        /// <returns>A response</returns>
         Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
     }
 }

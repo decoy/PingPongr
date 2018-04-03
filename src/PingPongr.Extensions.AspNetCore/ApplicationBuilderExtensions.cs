@@ -4,14 +4,17 @@
     using Microsoft.Extensions.DependencyInjection;
     using PingPongr.Extensions.AspNetCore;
 
+    /// <summary>
+    /// Extensions for the <see cref="IApplicationBuilder"/>
+    /// </summary>
     public static class ApplicationBuilderExtensions
     {
         /// <summary>
-        /// Attaches the PingPongr <see cref="router"/> to the middleware pipeline.
+        /// Attaches the PingPongr <see cref="Router"/> to the middleware pipeline.
         /// This should be the last 'use' in a pipeline.
         /// </summary>
         /// <param name="app">The application builder</param>
-        /// <param name="router">The PingPongr <see cref="router"/></param>
+        /// <param name="router">The PingPongr <see cref="Router"/></param>
         /// <returns></returns>
         public static IApplicationBuilder UsePingPongr(this IApplicationBuilder app, IRouter router)
         {
@@ -24,7 +27,7 @@
         }
 
         /// <summary>
-        /// Attaches the PingPongr <see cref="router"/> to the middleware pipeline.
+        /// Attaches the PingPongr <see cref="Router"/> to the middleware pipeline.
         /// This should be the last 'use' in a pipeline.
         /// Uses the ApplicationServices to resolve media types and will auto load all routes with default options.
         /// </summary>

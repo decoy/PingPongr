@@ -11,7 +11,7 @@
         /// A function to see if this handler can process the specified media type.
         /// ex: "application/json"
         /// </summary>
-        /// <param name="mediaType"></param>
+        /// <param name="contentType"></param>
         /// <returns></returns>
         bool CanHandle(string contentType);
 

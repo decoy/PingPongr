@@ -11,6 +11,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Description>Extensions for configuring and registering PingPongr with ASP.NET.</Description>
     <PackageTags>PingPongr</PackageTags>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

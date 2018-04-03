@@ -21,13 +21,17 @@
         /// </summary>
         /// <param name="routes">The list of unique routes to be handled</param>
         /// <param name="mediaHandlers">Available media handlers</param>
-        /// <param name="factory">Factory used to generate new request handlers</param>
         public Router(IEnumerable<IRoute> routes, IEnumerable<IMediaTypeHandler> mediaHandlers)
         {
             this.routes = routes.ToDictionary(r => r.Path);
             this.mediaHandlers = mediaHandlers;
         }
 
+        /// <summary>
+        /// Routes the request represented by the context to the appropriate route.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public async Task RouteRequest(IRequestContext context)
         {
             context.IsHandled = false;

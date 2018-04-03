@@ -11,18 +11,24 @@
     public class Route<TRequest, TResponse> : IRoute
        where TRequest : IRouteRequest<TResponse>
     {
+        /// <summary>
+        /// The path to be matche
+        /// </summary>
         public string Path { get; }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="path"></param>
         public Route(string path)
         {
             Path = path;
         }
 
         /// <summary>
-        /// Deserializes the request, resolve the <see cref="IRouteRequestHandler<TRequest, TResponse>"/>, then writes the response
+        /// Deserializes the request, resolve the <see cref="IRouteRequestHandler{TRequest, TResponse}"/>, then writes the response
         /// </summary>
         /// <param name="mediaHandler">Media handler for the request</param>
-        /// <param name="factory">instance factory for generating the handlers</param>
         /// <param name="context">request context</param>
         /// <returns>the awaitable task representing the routing operation</returns>
         public async Task Send(IMediaTypeHandler mediaHandler, IRequestContext context)

@@ -12,16 +12,28 @@
     {
         private JsonSerializer serializer;
 
+        /// <summary>
+        /// Creates a media handler using the <see cref="JsonSerializer"/>
+        /// </summary>
+        /// <param name="serializer"></param>
         public JsonNetMediaHandler(JsonSerializer serializer)
         {
             this.serializer = serializer;
         }
 
+        /// <summary>
+        /// Creates a default serializer to use for media handling
+        /// </summary>
         public JsonNetMediaHandler()
         {
             serializer = JsonSerializer.CreateDefault();
         }
 
+        /// <summary>
+        /// Checks if the content type (media type) is json.
+        /// </summary>
+        /// <param name="contentType"></param>
+        /// <returns></returns>
         public bool CanHandle(string contentType)
         {
             if (string.IsNullOrEmpty(contentType))
@@ -37,6 +49,12 @@
                    || mimeType.EndsWith("+json", StringComparison.OrdinalIgnoreCase);
         }
 
+        /// <summary>
+        /// Reads the json data from the context and deserializes it appropriately
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public Task<T> Read<T>(IRequestContext context)
         {
             using (StreamReader reader = new StreamReader(context.RequestBody, System.Text.Encoding.UTF8, true, 1024, true))
@@ -46,6 +64,13 @@
             }
         }
 
+        /// <summary>
+        /// Writes the json data to the context
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
         public Task Write<T>(IRequestContext context, T content)
         {
             context.ResponseContentType = "application/json";

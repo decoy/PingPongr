@@ -12,6 +12,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Copyright />
     <PackageTags>PingPongr</PackageTags>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
