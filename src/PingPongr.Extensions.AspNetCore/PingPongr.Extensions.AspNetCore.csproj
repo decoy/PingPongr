@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <PackageLicenseUrl>https://github.com/decoy/PingPongr/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/decoy/PingPongr</PackageProjectUrl>
     <RepositoryUrl>git://github.com/decoy/PingPongr</RepositoryUrl>
@@ -12,6 +12,7 @@
     <Description>Extensions for configuring and registering PingPongr with ASP.NET.</Description>
     <PackageTags>PingPongr</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>

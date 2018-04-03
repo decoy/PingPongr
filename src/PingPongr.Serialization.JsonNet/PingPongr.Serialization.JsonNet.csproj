@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <RepositoryUrl>git://github.com/decoy/PingPongr</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageProjectUrl>https://github.com/decoy/PingPongr</PackageProjectUrl>
@@ -13,6 +13,7 @@
     <Copyright />
     <PackageTags>PingPongr</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
