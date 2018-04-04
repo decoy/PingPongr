@@ -13,7 +13,7 @@
     <Copyright />
     <PackageTags>PingPongr</PackageTags>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <Version>1.0.1</Version>
+    <VersionPrefix>1.0.1</VersionPrefix>
   </PropertyGroup>
 
   <ItemGroup>
