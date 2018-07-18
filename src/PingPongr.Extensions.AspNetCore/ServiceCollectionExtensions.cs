@@ -7,7 +7,7 @@
     using System.Reflection;
 
     /// <summary>
-    /// Helpers for registering the Route Handlers against the IServiceCollection 
+    /// Helpers for registering PingPongr Route Handlers against the <see cref="IServiceCollection"/> 
     /// </summary>
     public static class ServiceCollectionExtensions
     {
@@ -41,7 +41,7 @@
         /// <returns></returns>
         public static IServiceCollection AddRouteHandlers(this IServiceCollection services, IEnumerable<Type> types)
         {
-            foreach (var t in types.Where(t => !t.IsAbstract && !t.IsInterface && !t.IsGenericType))
+            foreach (var t in GetImplementedTypes(types))
             {
                 AddRouteHandler(services, t);
             }
@@ -74,6 +74,11 @@
                 services.AddScoped(handler, type);
             }
             return services;
+        }
+
+        private static IEnumerable<Type> GetImplementedTypes(IEnumerable<Type> types)
+        {
+            return types.Where(t => !t.IsAbstract && !t.IsInterface && !t.IsGenericType);
         }
 
         private static IEnumerable<Type> GetRouteHandlersForType(Type type)

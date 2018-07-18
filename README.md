@@ -32,7 +32,7 @@ namespace Examples.Simple
     using System.Threading;
     using System.Threading.Tasks;
 
-    // A request is unqiue per route.
+    // A request is unique per route.
     // It defines what response type is expected.
     public class Ping : IRouteRequest<Pong>
     {
@@ -62,8 +62,8 @@ namespace Examples.Simple
             // add the route handlers to the service registrations.
             services.AddRouteHandlers();
 
-            // Using the PingPongr.JsonNet media handler.
-            services.AddSingleton<IMediaTypeHandler, JsonNetMediaHandler>();
+            // Using the PingPongr.JsonNet media handler middleware
+            services.AddSingleton<IRouterMiddleware, JsonNetMiddleware>();
         }
 
         public void Configure(IApplicationBuilder app)

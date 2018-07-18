@@ -3,6 +3,7 @@
     using Microsoft.AspNetCore.Builder;
     using Microsoft.Extensions.DependencyInjection;
     using PingPongr.Extensions.AspNetCore;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Extensions for the <see cref="IApplicationBuilder"/>
@@ -33,7 +34,7 @@
         /// <summary>
         /// Attaches the PingPongr <see cref="Router"/> to the ASP.NET middleware pipeline.
         /// This should be the last 'use' in a pipeline.
-        /// Uses the ApplicationServices to resolve <see cref="IRouterMiddleware"/> types and will auto load all routes with default options.
+        /// Uses the ApplicationServices to resolve <see cref="IRouterMiddleware"/> types and will auto load all routes and middlewares with default options.
         /// </summary>
         /// <param name="app">The application builder</param>
         /// <returns></returns>
@@ -43,6 +44,17 @@
                 .ApplicationServices
                 .GetServices<IRouterMiddleware>();
 
+            return UsePingPongr(app, middlewares);
+        }
+
+        /// <summary>
+        /// Attaches the PingPongr <see cref="Router"/> to the ASP.NET middleware pipeline with the specified middlewares
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="middlewares"></param>
+        /// <returns></returns>
+        public static IApplicationBuilder UsePingPongr(this IApplicationBuilder app, IEnumerable<IRouterMiddleware> middlewares)
+        {
             var routes = RouteBuilder
                 .WithLoadedAssemblies()
                 .GetRoutes();
