@@ -69,16 +69,18 @@
 
             var handler = GetDelegateFromContext(context);
 
-            foreach (var m in middlewares)
+            // middlewares are defined outer to inner, but we build this inner to outer
+            foreach (var m in middlewares.Reverse())
             {
+                var inner = next;
                 next = () =>
                 {
-                    return m.Route(context, handler, next);
+                    return m.Route(context, handler, inner);
                 };
             }
 
-            // doesn't return a response
-            // the middlewares are responsible for doing something useful with them.
+            // Response isn't accessible by the caller.
+            // The middlewares are responsible for doing something useful with them.
             return next();
         }
     }

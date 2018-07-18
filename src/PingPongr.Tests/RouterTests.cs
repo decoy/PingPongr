@@ -123,5 +123,23 @@
             Assert.IsFalse(handler.HasHandled);
             Assert.IsFalse(media.HasWritten);
         }
+
+        [TestMethod]
+        public async Task ShouldUseMiddlewaresInReverse()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod]
+        public async Task ShouldErrorOnDuplicateRoutes()
+        {
+            throw new NotImplementedException();
+        }
+
+        [TestMethod]
+        public async Task ShouldWarnIfNoMiddleware()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

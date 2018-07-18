@@ -1,4 +1,5 @@
 ﻿using PingPongr;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,12 @@ namespace Examples.Complex.Handlers
 
         public async Task<Pong> Handle(Ping request, CancellationToken cancellationToken)
         {
+            if (request.Name == "Bob")
+            {
+                // demonstrate the custom exception middleware
+                throw new UnauthorizedAccessException("Bob isn't allowed here.");
+            }
+
             var greeting = await service.GetRandomGreeting();
 
             var pong = new Pong()

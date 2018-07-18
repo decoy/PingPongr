@@ -5,30 +5,30 @@
     using System.Threading;
 
     /// <summary>
-    /// Wraps a standard <see cref="HttpContext"/> to be used in PingPongr
+    /// Wraps a standard <see cref="Microsoft.AspNetCore.Http.HttpContext"/> to be used in PingPongr
     /// </summary>
     public class AspNetRequestContext : IRequestContext
     {
         /// <summary>
-        /// Creates a <see cref="IRequestContext"/> from <see cref="HttpContext"/>
+        /// Creates a <see cref="IRequestContext"/> from <see cref="Microsoft.AspNetCore.Http.HttpContext"/>
         /// </summary>
         /// <param name="context"></param>
         public AspNetRequestContext(HttpContext context)
         {
-            Context = context;
+            HttpContext = context;
         }
 
         /// <summary>
-        /// The <see cref="HttpContext"/> associated with this request.
+        /// The <see cref="Microsoft.AspNetCore.Http.HttpContext"/> associated with this request.
         /// </summary>
-        public HttpContext Context { get; private set; }
+        public HttpContext HttpContext { get; private set; }
 
         /// <summary>
         /// Request.Path
         /// </summary>
         public string Path
         {
-            get { return Context.Request.Path; }
+            get { return HttpContext.Request.Path; }
         }
 
         /// <summary>
@@ -36,7 +36,7 @@
         /// </summary>
         public string RequestContentType
         {
-            get { return Context.Request.ContentType; }
+            get { return HttpContext.Request.ContentType; }
         }
 
         /// <summary>
@@ -44,7 +44,7 @@
         /// </summary>
         public Stream RequestBody
         {
-            get { return Context.Request.Body; }
+            get { return HttpContext.Request.Body; }
         }
 
         /// <summary>
@@ -52,8 +52,8 @@
         /// </summary>
         public string ResponseContentType
         {
-            get { return Context.Response.ContentType; }
-            set { Context.Response.ContentType = value; }
+            get { return HttpContext.Response.ContentType; }
+            set { HttpContext.Response.ContentType = value; }
         }
 
         /// <summary>
@@ -61,7 +61,7 @@
         /// </summary>
         public Stream ResponseBody
         {
-            get { return Context.Response.Body; }
+            get { return HttpContext.Response.Body; }
         }
 
         /// <summary>
@@ -69,7 +69,7 @@
         /// </summary>
         public CancellationToken CancellationToken
         {
-            get { return Context.RequestAborted; }
+            get { return HttpContext.RequestAborted; }
         }
 
         /// <summary>
@@ -80,7 +80,7 @@
         /// <returns></returns>
         public T GetService<T>()
         {
-            return (T)Context.RequestServices.GetService(typeof(T));
+            return (T)HttpContext.RequestServices.GetService(typeof(T));
         }
     }
 }

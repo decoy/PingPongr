@@ -1,15 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using PingPongr;
 using PingPongr.Serialization.JsonNet;
-using System;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace Examples.Complex
 {
@@ -53,10 +50,12 @@ namespace Examples.Complex
 
                 var media = new JsonNetMiddleware(JsonSerializer.Create(settings));
 
-                var router = new Router(routes, new[] { media });
+                // our custom exception handling middleware
+                var errors = new ExceptionMiddleware();
 
-                // before pingpongr, we're adding our exception handlers
-                api.Use(ExceptionMiddleWare);
+                // Middleware order is important, just like in ASP.NET
+                // define them 'outer' to 'inner' where outer middlewares wrap inner.
+                var router = new Router(routes, new IRouterMiddleware[] { errors, media });
 
                 // manually adding the pingpongr router to the /api path
                 api.UsePingPongr(router);
@@ -78,32 +77,6 @@ namespace Examples.Complex
             {
                 FileProvider = files
             });
-        }
-
-        private async Task ExceptionMiddleWare(HttpContext context, Func<Task> next)
-        {
-            // for a real application, you will want custom exceptions
-            // that way standard exceptions thrown from libraries won't trigger these handlers
-            try
-            {
-                await next();
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                context.Response.StatusCode = 401;
-                context.Response.HttpContext
-                    .Features
-                    .Get<IHttpResponseFeature>()
-                    .ReasonPhrase = ex.Message;
-            }
-            catch (ArgumentException ex)
-            {
-                context.Response.StatusCode = 400;
-                context.Response.HttpContext
-                   .Features
-                   .Get<IHttpResponseFeature>()
-                   .ReasonPhrase = ex.Message;
-            }
         }
     }
 }

@@ -22,8 +22,6 @@
         /// <param name="middlewares">Middlewares that process the routes</param>
         public Router(IEnumerable<IRoute> routes, IEnumerable<IRouterMiddleware> middlewares)
         {
-            // TODO - do some more advanced error checking here
-            // dupe paths and no middleware warnings/errors
             this.routes = routes.ToDictionary(r => r.Path);
             this.middlewares = middlewares;
         }
