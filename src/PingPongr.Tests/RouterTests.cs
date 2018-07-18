@@ -2,6 +2,7 @@
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Collections.Generic;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -46,7 +47,7 @@
 
             public string Path { get; set; }
 
-            public Task Send(IMediaTypeHandler mediaHandler, IRequestContext context)
+            public Task Send(IRequestContext context, IEnumerable<IRouterMiddleware> middlewares)
             {
                 HasSent = true;
                 return Task.CompletedTask;
@@ -59,10 +60,10 @@
             var handler = new FakeHandler();
             var route = new Route<Ping, Pong>("/Ping");
             var request = new FakeRequest();
-            request.Services.Add(typeof(IRouteRequestHandler<Ping, Pong>), handler);
+            request.AddHandlerService(handler);
             var media = new FakeMedia();
 
-            await route.Send(media, request);
+            await route.Send(request, new[] { media });
 
             Assert.IsTrue(media.HasRead);
             Assert.IsTrue(media.HasWritten);
@@ -81,7 +82,6 @@
 
             await router.RouteRequest(request);
 
-            Assert.IsTrue(request.IsHandled);
             Assert.IsTrue(route.HasSent);
         }
 
@@ -107,13 +107,13 @@
             var handler = new FakeCancelMeHandler();
             var route = new Route<Ping, Pong>("/Ping");
             var request = new FakeRequest();
-            request.Services.Add(typeof(IRouteRequestHandler<Ping, Pong>), handler);
+            request.AddHandlerService(handler);
             var media = new FakeMedia();
             var cancel = new CancellationTokenSource();
             request.CancellationToken = cancel.Token;
 
             cancel.Cancel();
-            var routeTask = route.Send(media, request);
+            var routeTask = route.Send(request, new[] { media });
 
             //standard async pattern throws on cancellation
             await Assert.ThrowsExceptionAsync<OperationCanceledException>(() => routeTask);

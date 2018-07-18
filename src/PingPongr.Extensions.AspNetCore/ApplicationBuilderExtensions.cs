@@ -10,7 +10,7 @@
     public static class ApplicationBuilderExtensions
     {
         /// <summary>
-        /// Attaches the PingPongr <see cref="Router"/> to the middleware pipeline.
+        /// Attaches the PingPongr <see cref="Router"/> to the ASP.NET middleware pipeline.
         /// This should be the last 'use' in a pipeline.
         /// </summary>
         /// <param name="app">The application builder</param>
@@ -27,26 +27,25 @@
         }
 
         /// <summary>
-        /// Attaches the PingPongr <see cref="Router"/> to the middleware pipeline.
+        /// Attaches the PingPongr <see cref="Router"/> to the ASP.NET middleware pipeline.
         /// This should be the last 'use' in a pipeline.
-        /// Uses the ApplicationServices to resolve media types and will auto load all routes with default options.
+        /// Uses the ApplicationServices to resolve <see cref="IRouterMiddleware"/> types and will auto load all routes with default options.
         /// </summary>
         /// <param name="app">The application builder</param>
         /// <returns></returns>
         public static IApplicationBuilder UsePingPongr(this IApplicationBuilder app)
         {
-            var mediaHandlers = app
+            var middlewares = app
                 .ApplicationServices
-                .GetServices<IMediaTypeHandler>();
+                .GetServices<IRouterMiddleware>();
 
             var routes = RouteBuilder
                 .WithLoadedAssemblies()
                 .GetRoutes();
 
-            // setup the PingPongr router
             var router = new Router(
                 routes,
-                mediaHandlers
+                middlewares
                 );
 
             return UsePingPongr(app, router);

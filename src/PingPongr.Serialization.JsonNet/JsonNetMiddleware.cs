@@ -6,9 +6,9 @@
     using System.Threading.Tasks;
 
     /// <summary>
-    /// Default implementation of a Json.Net media handler.
+    /// Default implementation of a Json.Net middleware for processing requests/responses.
     /// </summary>
-    public class JsonNetMediaHandler : IMediaTypeHandler
+    public class JsonNetMiddleware : IRouterMiddleware
     {
         private JsonSerializer serializer;
 
@@ -16,7 +16,7 @@
         /// Creates a media handler using the <see cref="JsonSerializer"/>
         /// </summary>
         /// <param name="serializer"></param>
-        public JsonNetMediaHandler(JsonSerializer serializer)
+        public JsonNetMiddleware(JsonSerializer serializer)
         {
             this.serializer = serializer;
         }
@@ -24,7 +24,7 @@
         /// <summary>
         /// Creates a default serializer to use for media handling
         /// </summary>
-        public JsonNetMediaHandler()
+        public JsonNetMiddleware()
         {
             serializer = JsonSerializer.CreateDefault();
         }
@@ -81,6 +81,36 @@
                 serializer.Serialize(jsonWriter, content);
                 jsonWriter.Flush();
                 return Task.CompletedTask;
+            }
+        }
+
+        /// <summary>
+        /// If the the <see cref="IRequestContext.RequestContentType"/> is json
+        /// this middleware will read the data from the request, run the route, then serialize the response.
+        /// </summary>
+        /// <typeparam name="TRequest"></typeparam>
+        /// <typeparam name="TResponse"></typeparam>
+        /// <param name="context"></param>
+        /// <param name="handler"></param>
+        /// <param name="next"></param>
+        /// <returns></returns>
+        public async Task<TResponse> Route<TRequest, TResponse>(IRequestContext context, RequestHandlerDelegate<TRequest, TResponse> handler, RouteMiddlewareDelegate<TResponse> next)
+        {
+            if (CanHandle(context.RequestContentType))
+            {
+                var req = await Read<TRequest>(context);
+
+                var resp = await handler(req, context.CancellationToken);
+
+                context.IsHandled = true;
+
+                await Write(context, resp);
+
+                return resp;
+            }
+            else
+            {
+                return await next();
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿namespace PingPongr
 {
+    using System.Collections.Generic;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -8,16 +9,16 @@
     public interface IRoute
     {
         /// <summary>
-        /// the path this route handles
+        /// The path this route handles
         /// </summary>
         string Path { get; }
 
         /// <summary>
-        /// The action to happen when routing
+        /// Runs the request through the specified middlewares
         /// </summary>
-        /// <param name="mediaHandler">The media handler for reading the request</param>
-        /// <param name="context">the request context</param>
-        /// <returns>An awaitable task representing the send action.</returns>
-        Task Send(IMediaTypeHandler mediaHandler, IRequestContext context);
+        /// <param name="context">The request context</param>
+        /// <param name="middlewares">The middlewares that will process this request</param>
+        /// <returns></returns>
+        Task Send(IRequestContext context, IEnumerable<IRouterMiddleware> middlewares);
     }
 }

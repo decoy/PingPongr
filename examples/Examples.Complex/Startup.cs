@@ -51,7 +51,7 @@ namespace Examples.Complex
                     ContractResolver = new CamelCasePropertyNamesContractResolver()
                 };
 
-                var media = new JsonNetMediaHandler(JsonSerializer.Create(settings));
+                var media = new JsonNetMiddleware(JsonSerializer.Create(settings));
 
                 var router = new Router(routes, new[] { media });
 

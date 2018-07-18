@@ -1,5 +1,7 @@
 ﻿namespace PingPongr
 {
+    using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
 
     /// <summary>
@@ -11,6 +13,11 @@
     public class Route<TRequest, TResponse> : IRoute
        where TRequest : IRouteRequest<TResponse>
     {
+        /// <summary>
+        /// The 'default' middleware behavior.
+        /// </summary>
+        private static readonly RouteMiddlewareDelegate<TResponse> baseMiddleware = () => Task.FromResult(default(TResponse));
+
         /// <summary>
         /// The path to be matche
         /// </summary>
@@ -26,20 +33,53 @@
         }
 
         /// <summary>
-        /// Deserializes the request, resolve the <see cref="IRouteRequestHandler{TRequest, TResponse}"/>, then writes the response
+        /// Creates a delegate to be used to run this route's handler from the context services.
         /// </summary>
-        /// <param name="mediaHandler">Media handler for the request</param>
-        /// <param name="context">request context</param>
-        /// <returns>the awaitable task representing the routing operation</returns>
-        public async Task Send(IMediaTypeHandler mediaHandler, IRequestContext context)
+        /// <param name="context">The context to build the delegate from</param>
+        /// <returns></returns>
+        public RequestHandlerDelegate<TRequest, TResponse> GetDelegateFromContext(IRequestContext context)
         {
-            var req = await mediaHandler.Read<TRequest>(context);
+            return (request, cancellationToken) =>
+            {
+                var behaviors = context.GetService<IEnumerable<IRouteRequestBehavior<TRequest, TResponse>>>();
+                var handler = context.GetService<IRouteRequestHandler<TRequest, TResponse>>();
 
-            var handler = context.GetService<IRouteRequestHandler<TRequest, TResponse>>();
+                RequestHandlerDelegate<TResponse> hdelegate = () => handler.Handle(request, cancellationToken);
 
-            var resp = await handler.Handle(req, context.CancellationToken);
+                var behavior = behaviors
+                    .Reverse()
+                    .Aggregate(hdelegate, (next, pipeline) => () =>
+                    {
+                        return pipeline.Handle(request, hdelegate, cancellationToken);
+                    });
 
-            await mediaHandler.Write(context, resp);
+                return behavior();
+            };
+        }
+
+        /// <summary>
+        /// Runs the request through the specified middlewares
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="middlewares"></param>
+        /// <returns></returns>
+        public Task Send(IRequestContext context, IEnumerable<IRouterMiddleware> middlewares)
+        {
+            var next = baseMiddleware;
+
+            var handler = GetDelegateFromContext(context);
+
+            foreach (var m in middlewares)
+            {
+                next = () =>
+                {
+                    return m.Route(context, handler, next);
+                };
+            }
+
+            // doesn't return a response
+            // the middlewares are responsible for doing something useful with them.
+            return next();
         }
     }
 }

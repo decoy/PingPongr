@@ -2,7 +2,7 @@
 {
     using System.Threading.Tasks;
 
-    public class FakeMedia : IMediaTypeHandler
+    public class FakeMedia : IRouterMiddleware
     {
         public bool HasRead { get; private set; }
 
@@ -23,6 +23,26 @@
         {
             HasWritten = true;
             return Task.CompletedTask;
+        }
+
+        public async Task<TResponse> Route<TRequest, TResponse>(IRequestContext context, RequestHandlerDelegate<TRequest, TResponse> route, RouteMiddlewareDelegate<TResponse> next)
+        {
+            if (CanHandle(context.RequestContentType))
+            {
+                var req = await Read<TRequest>(context);
+
+                var resp = await route(req, context.CancellationToken);
+
+                await Write(context, resp);
+
+                context.IsHandled = true;
+
+                return resp;
+            }
+            else
+            {
+                return await next();
+            }
         }
     }
 }

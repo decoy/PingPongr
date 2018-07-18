@@ -26,7 +26,7 @@ namespace PingPongr.Tests
         [DataRow("application/vnd[stuff]+json", true)]
         public void ShouldHandleTypes(string header, bool isValid)
         {
-            var handler = new JsonNetMediaHandler();
+            var handler = new JsonNetMiddleware();
 
             Assert.AreEqual(handler.CanHandle(header), isValid);
         }
@@ -39,7 +39,7 @@ namespace PingPongr.Tests
                 NullValueHandling = NullValueHandling.Ignore,
             };
             var serializer = JsonSerializer.Create(settings);
-            var handler = new JsonNetMediaHandler(serializer);
+            var handler = new JsonNetMiddleware(serializer);
 
             var data = new DummyData()
             {
@@ -64,7 +64,7 @@ namespace PingPongr.Tests
         [TestMethod]
         public async Task ShouldDeserializeData()
         {
-            var handler = new JsonNetMediaHandler(JsonSerializer.CreateDefault());
+            var handler = new JsonNetMiddleware(JsonSerializer.CreateDefault());
 
             using (var req = new FakeRequest())
             {

@@ -39,7 +39,7 @@
             services.AddRouteHandlers();
 
             // Using the PingPongr.JsonNet media handler.
-            services.AddSingleton<IMediaTypeHandler, JsonNetMediaHandler>();
+            services.AddSingleton<IRouterMiddleware, JsonNetMiddleware>();
         }
 
         public void Configure(IApplicationBuilder app)
