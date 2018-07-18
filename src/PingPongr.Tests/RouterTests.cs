@@ -137,7 +137,7 @@
         }
 
         [TestMethod]
-        public async Task ShouldWarnIfNoMiddleware()
+        public async Task ShouldErrorIfNoMiddleware()
         {
             throw new NotImplementedException();
         }

@@ -37,7 +37,7 @@
         /// </summary>
         /// <param name="context">The context to build the delegate from</param>
         /// <returns></returns>
-        public RequestHandlerDelegate<TRequest, TResponse> GetDelegateFromContext(IRequestContext context)
+        private RequestHandlerDelegate<TRequest, TResponse> GetDelegateFromContext(IRequestContext context)
         {
             return (request, cancellationToken) =>
             {

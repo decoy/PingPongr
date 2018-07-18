@@ -34,17 +34,18 @@ namespace Examples.Complex
             return default(TResponse); // no data to pass on to any other middlewares
         }
 
-        private static void SetHttpContextStatus(IRequestContext context, int code, string message)
+        private static void SetHttpContextStatus(IRequestContext requestContext, int code, string message)
         {
             // PingPongr doesn't know anything about HTTP protocols
             // so we have to get the HTTP context from the request here
-            var httpContext = ((AspNetRequestContext)context).HttpContext;
-
-            httpContext.Response.StatusCode = code;
-            httpContext.Response.HttpContext
-               .Features
-               .Get<IHttpResponseFeature>()
-               .ReasonPhrase = message;
+            if (requestContext is AspNetRequestContext ctx)
+            {
+                ctx.HttpContext.Response.StatusCode = code;
+                ctx.HttpContext.Response.HttpContext
+                   .Features
+                   .Get<IHttpResponseFeature>()
+                   .ReasonPhrase = message;
+            }
         }
     }
 }
