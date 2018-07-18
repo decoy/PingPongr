@@ -32,15 +32,16 @@
         /// Routes the request represented by the context to the appropriate route.
         /// </summary>
         /// <param name="context"></param>
-        /// <returns></returns>
-        public async Task RouteRequest(IRequestContext context)
+        /// <returns>Returns whether or not the request was matched a route</returns>
+        public async Task<bool> RouteRequest(IRequestContext context)
         {
-            context.IsHandled = false;
-
             if (routes.TryGetValue(context.Path, out var route)) //must match exactly
             {
                 await route.Send(context, middlewares);
+                return true;
             }
+
+            return false;
         }
     }
 }

@@ -35,8 +35,6 @@
 
                 await Write(context, resp);
 
-                context.IsHandled = true;
-
                 return resp;
             }
             else

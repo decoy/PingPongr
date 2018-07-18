@@ -9,32 +9,26 @@
     /// </summary>
     public class AspNetRequestContext : IRequestContext
     {
-        private readonly HttpContext context;
-
         /// <summary>
         /// Creates a <see cref="IRequestContext"/> from <see cref="HttpContext"/>
         /// </summary>
         /// <param name="context"></param>
         public AspNetRequestContext(HttpContext context)
         {
-            this.context = context;
+            Context = context;
         }
+
+        /// <summary>
+        /// The <see cref="HttpContext"/> associated with this request.
+        /// </summary>
+        public HttpContext Context { get; private set; }
 
         /// <summary>
         /// Request.Path
         /// </summary>
         public string Path
         {
-            get { return context.Request.Path; }
-        }
-
-        /// <summary>
-        /// If true, status code will be 200.  Else 404.
-        /// </summary>
-        public bool IsHandled
-        {
-            get { return context.Response.StatusCode == 200; }
-            set { context.Response.StatusCode = value ? 200 : 404; }
+            get { return Context.Request.Path; }
         }
 
         /// <summary>
@@ -42,7 +36,7 @@
         /// </summary>
         public string RequestContentType
         {
-            get { return context.Request.ContentType; }
+            get { return Context.Request.ContentType; }
         }
 
         /// <summary>
@@ -50,7 +44,7 @@
         /// </summary>
         public Stream RequestBody
         {
-            get { return context.Request.Body; }
+            get { return Context.Request.Body; }
         }
 
         /// <summary>
@@ -58,8 +52,8 @@
         /// </summary>
         public string ResponseContentType
         {
-            get { return context.Response.ContentType; }
-            set { context.Response.ContentType = value; }
+            get { return Context.Response.ContentType; }
+            set { Context.Response.ContentType = value; }
         }
 
         /// <summary>
@@ -67,7 +61,7 @@
         /// </summary>
         public Stream ResponseBody
         {
-            get { return context.Response.Body; }
+            get { return Context.Response.Body; }
         }
 
         /// <summary>
@@ -75,7 +69,7 @@
         /// </summary>
         public CancellationToken CancellationToken
         {
-            get { return context.RequestAborted; }
+            get { return Context.RequestAborted; }
         }
 
         /// <summary>
@@ -86,7 +80,7 @@
         /// <returns></returns>
         public T GetService<T>()
         {
-            return (T)context.RequestServices.GetService(typeof(T));
+            return (T)Context.RequestServices.GetService(typeof(T));
         }
     }
 }

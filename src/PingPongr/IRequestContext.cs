@@ -14,11 +14,6 @@
         string Path { get; }
 
         /// <summary>
-        /// True if this request was processed by a handler (matched a route).
-        /// </summary>
-        bool IsHandled { get; set; }
-
-        /// <summary>
         /// The request body stream media type (json/xml/etc.)
         /// </summary>
         string RequestContentType { get; }
@@ -29,8 +24,7 @@
         Stream RequestBody { get; }
 
         /// <summary>
-        /// The response media type.
-        /// Set by the media handlers
+        /// The response media type
         /// </summary>
         string ResponseContentType { get; set; }
 

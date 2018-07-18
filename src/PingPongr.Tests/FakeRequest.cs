@@ -10,8 +10,6 @@
     {
         private Dictionary<Type, object> Services { get; set; } = new Dictionary<Type, object>();
 
-        public bool IsHandled { get; set; }
-
         public string Path { get; set; }
 
         public Stream RequestBody { get; set; } = new MemoryStream();

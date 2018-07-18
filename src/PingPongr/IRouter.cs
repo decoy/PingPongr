@@ -11,7 +11,7 @@
         /// Route the request
         /// </summary>
         /// <param name="context">the request context</param>
-        /// <returns>An awaitable task</returns>
-        Task RouteRequest(IRequestContext context);
+        /// <returns>An awaitable task that specifies if the route was handled or not</returns>
+        Task<bool> RouteRequest(IRequestContext context);
     }
 }

@@ -102,9 +102,10 @@
 
                 var resp = await handler(req, context.CancellationToken);
 
-                context.IsHandled = true;
-
-                await Write(context, resp);
+                if (resp != null)
+                {
+                    await Write(context, resp);
+                }
 
                 return resp;
             }

@@ -80,9 +80,10 @@
 
             var router = new Router(new[] { route }, new[] { media });
 
-            await router.RouteRequest(request);
+            var routed = await router.RouteRequest(request);
 
             Assert.IsTrue(route.HasSent);
+            Assert.IsTrue(routed);
         }
 
         [TestMethod]
@@ -95,10 +96,10 @@
 
             var router = new Router(new[] { route }, new[] { media });
 
-            await router.RouteRequest(request);
+            var routed = await router.RouteRequest(request);
 
-            Assert.IsFalse(request.IsHandled);
             Assert.IsFalse(route.HasSent);
+            Assert.IsFalse(routed);
         }
 
         [TestMethod]

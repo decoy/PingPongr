@@ -20,7 +20,11 @@
         {
             app.Run(async (ctx) =>
             {
-                await router.RouteRequest(new AspNetRequestContext(ctx));
+                ctx.Response.StatusCode = 200;
+                if (!await router.RouteRequest(new AspNetRequestContext(ctx)))
+                {
+                    ctx.Response.StatusCode = 404;
+                }
             });
 
             return app;
